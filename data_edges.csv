@@ -1,0 +1,172 @@
+s,t,time_min,distance_km,s_Node_Number,t_Node_Number
+5Th Avenue - Caloocan,Monumento,5.0,1.4,33,34
+5Th Avenue - Caloocan,A.Mabini Avenue,3.0,1.0,33,32
+5Th Avenue - Caloocan,Abad Santos,5.0,1.6,33,40
+5Th Avenue - Caloocan,Sgt. Rivera,3.0,1.1,33,129
+5Th Avenue Cor. R10,MMDA Navotas Bus Terminal,3.0,1.6,28,29
+5Th Avenue Cor. R10,Capulong Street,4.0,2.2,28,27
+A.Mabini Avenue,Lapu-Lapu Avenue,5.0,2.0,32,31
+Abad Santos,Blumentritt Road,4.0,0.95,40,41
+Alabang,SM Center Muntinlupa,14.0,4.5,7,8
+Alabang,Tramo,32.0,10.4,7,6
+Alabang,Sucat Exit,4.0,4.1,7,9
+Amparo,SM Fairview,7.0,2.7,104,103
+Amparo,Pangarap,5.0,1.9,104,105
+Anastacio Road,Cavalry Drive.,5.0,2.1,56,57
+Anastacio Road,EDSA Carousel - Buendia,4.0,1.4,56,142
+Antonio Arnaiz Avenue,Gil Puyat Avenue,1.0,1.0,20,21
+Antonio Arnaiz Avenue,Heritage Hotel,1.0,1.0,20,1
+Araneta Avenue - Quezon,Timog Avenue,6.0,1.8,93,140
+Araneta Avenue - Quezon,Banawe,2.0,0.7,93,92
+Arnaiz Avenue,Magallanes Bus Stop,3.0,1.4,52,19
+Arnaiz Avenue,Buendia Avenue,2.0,0.8,52,49
+Arsenio H. Lacson Avenue,Espana,2.0,0.55,89,90
+Arsenio H. Lacson Avenue,FEU,4.0,1.0,89,88
+Ayala Avenue,Makati Avenue,4.0,1.3,50,137
+Ayala Avenue,Buendia Avenue,7.0,0.9,50,49
+Balintawak Bus Terminal,Roosevelt - Quezon,4.0,2.3,130,114
+Balintawak Bus Terminal,VGC,7.0,5.9,130,123
+Balintawak Bus Terminal,Sgt. Rivera,4.0,1.5,130,129
+Banawe,Rotonda,3.0,0.9,92,135
+Batasan,C-5 R-7,4.0,3.0,97,139
+Batasan,Litex,2.0,1.4,97,98
+Batasan,Filinvest 2,4.0,1.6,97,99
+Bayani Road,Taguig District Hospital / FTI,5.0,2.5,127,17
+Bayani Road,Diego Silang Footbridge,2.0,1.3,127,53
+Bayview,Intramuros / Anda Circle,5.0,1.5,23,24
+Bayview,Ospital Ng Maynila,4.0,1.8,23,22
+Betty Go-Belmonte,Cubao,3.0,0.9,74,126
+Betty Go-Belmonte,Robinsons Magnolia,2.0,0.6,74,73
+Bicutan Exit,Taguig District Hospital / FTI,3.0,3.0,16,17
+Bicutan Exit,Sucat Exit,3.0,3.7,16,9
+Blumentritt - Sampaloc,Rotonda,1.0,0.45,91,135
+Blumentritt - Sampaloc,Espana,1.0,0.35,91,90
+Blumentritt Road,Chinese General Hospital,4.0,0.9,41,128
+Blumentritt Road,Tayuman,3.0,0.7,41,42
+Bonny Serrano Avenue,Gilmore,5.0,1.1,75,72
+Bonny Serrano Avenue,Robinsons Galleria,9.0,2.5,75,76
+Bonny Serrano Avenue,Valencia,3.0,0.65,75,132
+Buendia,Quirino Avenue - Manila,8.0,1.9,47,46
+Buendia,Gil Puyat Avenue,3.0,0.9,47,21
+Buendia,Libertad,3.0,0.7,47,48
+Buendia,Buendia Avenue,7.0,1.2,47,49
+C-5 Ortigas,Julia Vargas Avenue,2.0,0.85,78,79
+C-5 Ortigas,Rosario,2.0,0.5,78,81
+C-5 Ortigas,Calle Industria,4.0,1.8,78,84
+C-5 Ortigas,Emerald Avenue,9.0,1.8,78,77
+C-5 R-7,Tandang Sora - Congressional,6.0,2.8,139,117
+C-5 R-7,UP Town Center,4.0,2.3,139,87
+C-5 R-7,Philcoa,4.0,2.3,139,96
+Calle Industria,Quirino Memorial Medical Center,6.0,2.6,84,85
+Capitol Commons,Dahlia,3.0,0.45,63,62
+Capitol Commons,EDSA-Shaw,5.0,1.1,63,64
+Capulong Street,Moriones Street,3.0,1.2,27,26
+Cavalry Drive.,Market Market,3.0,1.1,57,55
+Cavalry Drive.,Pasig Boulevard,3.0,1.4,57,60
+Centris Station (EDSA / Quezon Avenue),Timog Avenue,5.0,1.4,94,140
+Centris Station (EDSA / Quezon Avenue),GMA-Kamuning MRT,2.0,1.4,94,95
+Centris Station (EDSA / Quezon Avenue),Quezon Memorial Circle,5.0,1.5,94,125
+Centris Station (EDSA / Quezon Avenue),SM North EDSA,4.0,1.6,94,113
+Chinese General Hospital,FEU,11.0,2.6,128,88
+Chinese General Hospital,Sgt. Rivera,9.0,2.5,128,129
+City of Dreams,DFA,2.0,0.7,3,136
+City of Dreams,Pitx,8.0,2.3,3,4
+Cubao,GMA-Kamuning MRT,5.0,1.7,126,95
+Cubao,Robinsons Galleria,11.0,3.4,126,76
+Cubao,K. Hari,7.0,2.2,126,134
+Cubao,Katipunan Avenue,17.0,2.9,126,86
+Dagat Dagatan,Lapu-Lapu Avenue,2.0,0.35,30,31
+Dagat Dagatan,MMDA Navotas Bus Terminal,5.0,1.7,30,29
+Dahlia,Rizal Medical Center,2.0,1.0,62,61
+DFA,SM MOA Globe EDSA,5.0,1.4,136,2
+Diamond Road,Novaliches Market,11.0,2.5,124,108
+Diamond Road,VGC,12.0,3.1,124,123
+Diego Silang Footbridge,Upper McKinley Road,3.5,1.5,53,54
+Doroteo Jose - Recto,Tayuman,5.0,1.5,43,42
+Doroteo Jose - Recto,Lawton,3.0,1.2,43,44
+Doroteo Jose - Recto,Isetann Recto,1.0,0.3,43,67
+EDSA Carousel - Buendia,Makati Avenue,4.0,1.1,142,137
+EDSA Carousel - Buendia,Glorietta 5,2.0,0.9,142,51
+EDSA Taft Avenue,Libertad,5.0,1.2,5,48
+EDSA Taft Avenue,Magallanes Bus Stop,7.0,2.3,5,19
+EDSA Taft Avenue,Heritage Hotel,6.0,0.9,5,1
+EDSA Taft Avenue,NAIA Terminal 3,12.0,3.3,5,15
+EDSA-Shaw,Shaw Center Mall,5.0,2.1,64,65
+Emerald Avenue,Robinsons Galleria,2.0,0.7,77,76
+FEU,Isetann Recto,1.0,0.18,88,67
+Filinvest 2,Northview,3.0,0.95,99,100
+Gil Puyat Avenue,Ospital Ng Maynila,4.0,1.4,21,22
+Gilmore,Robinsons Magnolia,1.0,0.45,72,73
+Gilmore,J. Ruiz,4.0,0.9,72,71
+Glorietta 5,Magallanes Bus Stop,4.0,2.0,51,19
+GMA-Kamuning MRT,Quezon Memorial Circle,8.0,2.7,95,125
+Gov Santiago,T Santiago,5.0,2.0,37,38
+Gov Santiago,Karuhatan Road,5.0,1.2,37,36
+Heritage Hotel,SM MOA Globe EDSA,4.0,1.0,1,2
+Heritage Hotel,Pitx,6.0,3.1,1,4
+Intramuros / Anda Circle,Recto Avenue,3.0,1.2,24,25
+Isetann Recto,Legarda Street,3.0,0.95,67,138
+Isetann Recto,Quiapo,1.0,0.5,67,122
+J. Ruiz,V.Mapa,4.0,1.2,71,70
+Julia Vargas Avenue,Lanuza Avenue,1.0,0.65,79,80
+K. Hari,Quezon Institute,5.0,2.1,134,133
+Kalentong,Shaw Center Mall,4.0,1.2,66,65
+Karuhatan Road,Victoneta Avenue,7.0,3.0,36,35
+Katipunan Avenue,UP Town Center,7.0,2.0,86,87
+Katipunan Avenue,Quirino Memorial Medical Center,2.0,1.2,86,85
+Katipunan Avenue,Marikina Bayan,3.0,0.9,86,118
+Katipunan Avenue,SM Marikina,3.0,1.6,86,120
+Lanuza Avenue,Pasig Boulevard,3.0,1.4,80,60
+Lawton,United Nations Avenue,4.0,1.5,44,45
+Lawton,Quiapo,2.0,0.8,44,122
+Legarda Street,Nagtahan,2.0,0.8,138,68
+Litex,Regalado Avenue,5.0,2.3,98,101
+Luckygold Plaza,SM City East Ortigas,6.0,1.2,82,83
+Luckygold Plaza,Rosario,4.0,1.0,82,81
+Magallanes Bus Stop,Nichols,4.0,2.8,19,18
+Malanday,T Santiago,2.0,0.9,39,38
+Malaria,Pangarap,5.0,1.3,106,105
+Marikina Bayan,Nangka,12.0,4.4,118,119
+Market Market,Upper McKinley Road,3.0,1.2,55,54
+Mindanao - Congressional,Veterans Memorial Medical Center,3.0,1.0,111,112
+Mindanao - Congressional,Tandang Sora - Mindanao,3.0,1.1,111,110
+Mindanao - Congressional,Shorthorn Street,4.0,1.4,111,115
+Mindanao - Congressional,Visayas Avenue,4.0,1.1,111,116
+Mindanao Avenue - Fairview,Regalado Avenue,9.0,2.6,141,101
+Mindanao Avenue - Fairview,Zabarte Road,4.0,1.4,141,102
+Monumento,Victoneta Avenue,4.0,1.3,34,35
+Moriones Street,Recto Avenue,3.0,1.3,26,25
+Nagtahan,Old Sta. Mesa Street,3.0,1.3,68,69
+NAIA Terminal 1,NAIA Terminal 2,9.0,2.4,12,13
+NAIA Terminal 1,Pitx,8.0,3.3,12,4
+NAIA Terminal 2,NAIA Terminal 4,8.0,2.6,13,14
+NAIA Terminal 4,NAIA Terminal 3,9.0,2.3,14,15
+Nichols,Taguig District Hospital / FTI,4.0,1.7,18,17
+Novaliches Market,Quirino Avenue - Quezon,11.0,3.9,108,109
+Novaliches Market,Novaliches Terminal,3.0,0.9,108,107
+Old Sta. Mesa Street,V.Mapa,2.0,0.7,69,70
+Ospital Ng Maynila,Quirino Avenue - Manila,3.0,1.0,22,46
+Pasig Boulevard,Pasig Rotonda - Jollibee,1.0,0.6,60,59
+Pasig Boulevard,Rizal Medical Center,2.0,0.8,60,61
+Pasig Palengke,Pasig Rotonda - Jollibee,5.0,1.7,58,59
+Philcoa,Quezon Memorial Circle,2.0,1.0,96,125
+Pinaglabanan,Valencia,3.0,1.1,131,132
+Pinaglabanan,V.Mapa,4.0,1.4,131,70
+Pitx,Sto. Nino,12.0,4.7,4,11
+Pitx,Tramo,11.0,7.6,4,6
+Quezon Institute,Rotonda,3.0,1.2,133,135
+Quezon Memorial Circle,SM North EDSA,8.0,3.0,125,113
+Quezon Memorial Circle,Visayas Avenue,6.0,3.0,125,116
+Quirino Avenue - Manila,United Nations Avenue,4.0,1.5,46,45
+Quirino Avenue - Quezon,Tandang Sora - Mindanao,3.0,1.7,109,110
+Roosevelt - Quezon,Shorthorn Street,3.0,1.6,114,115
+Roosevelt - Quezon,SM North EDSA,2.0,0.8,114,113
+SM City Sucat,Sucat Exit,12.0,6.7,10,9
+SM City Sucat,Sto. Nino,5.0,2.5,10,11
+SM Fairview,Zabarte Road,5.0,2.3,103,102
+SM Marikina,Sta. Lucia East Grand Mall Cainta,3.0,1.8,120,121
+SM North EDSA,Veterans Memorial Medical Center,8.0,3.7,113,112
+Tandang Sora - Congressional,Visayas Avenue,2.0,0.65,117,116
+Zabarte Road,Camarin,14.0,4.2,102,144
+Bagong Silang Market,Camarin,3.0,0.7,143,144
+Novaliches Terminal,Zabarte Road,4.0,1.0,107,102
