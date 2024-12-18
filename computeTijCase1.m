@@ -36,8 +36,6 @@ function [tij]=computeTijCase1(i,j,common_route, TimeMatrix)
         for m = 1: length(g)-1
             tij = tij + TimeMatrix(g(m),g(m+1));
         end
-        %tij = tij + waiting_time*(length(g)-2);
-        %tij = tij;
     end
     
     

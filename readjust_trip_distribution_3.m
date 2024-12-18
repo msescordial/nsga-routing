@@ -14,7 +14,7 @@ d = array;
 disp(d)
 
 % Change the value of n (no. of bus stops);
-n = 144;
+n = 149;
 b = ones(1,n); 
 
 a = zeros(n,1);

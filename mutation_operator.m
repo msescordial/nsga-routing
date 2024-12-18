@@ -90,7 +90,7 @@ function new_node = mutation_operator(node, DistanceMatrix, vec, n)
         k_paths = 5;
         [shortestPaths, totalCosts] = kSP(DistanceMatrix, vici, aft, k_paths);
         for h=1:k_paths
-            path = shortestPaths{1,k}; len_path = length(path);
+            path = shortestPaths{1,h}; len_path = length(path);
             %disp("path"); disp(path);
             n_node = path(1,1:len_path-1); 
             D = ismember(n_node,vec);

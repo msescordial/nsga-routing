@@ -13,11 +13,11 @@
 %
 
 function [front_pop] = NSGA_2(min_route_length, max_route_length, network_name, DistanceMatrix, TimeMatrix, TravelDemandMatrix, ...
-    TerminalNodes, k_ksP, s, transfer_time, n)
+    TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro)
 
 %% ----- Parameters -----
-max_no_of_generations = 10;       % maximum no. of generations (100)
-population_size = 50;             % (100)
+max_no_of_generations = 3;       % maximum no. of generations (200)
+population_size = 20;             % (100)
 P_ce = 0.5;             % inter-crossover probability
 P_ca = 0.5;             % intra-crossover probability
 P_m = 0.05;             % mutation probability
@@ -25,11 +25,15 @@ P_m = 0.05;             % mutation probability
 %% ----- INITIALIZATION -----
 % GENERATE CANDIDATE ROUTES
 tic
-%[BusRouteID, AllPaths, AllCosts, TotalNoOfRoutes] = generateRoutes(DistanceMatrix,k_ksP,TerminalNodes);
-%save('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes','-mat')
-load('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes');
 
-%disp(BusRouteID);
+if (network_name == "metro_manila")
+    %[BusRouteID, AllPaths, AllCosts, TotalNoOfRoutes] = generateRoutes(DistanceMatrix,k_ksP,TerminalNodes);
+    %save('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes','-mat')
+    load('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes');
+else
+    [BusRouteID, AllPaths, AllCosts, TotalNoOfRoutes] = generateRoutes(DistanceMatrix,k_ksP,TerminalNodes);
+end
+
 fprintf('\nNo. of candidate routes generated is %d.\n\n', TotalNoOfRoutes);
 toc
 
@@ -42,56 +46,49 @@ empty_individual.CrowdingDistance=[];
 pop=repmat(empty_individual,population_size,1);
 
 % GENERATE INITIAL POPULATION
-%initial_pop_matrix = cell(population_size,5);
+initial_pop_matrix = cell(population_size,5);
 % 1st col: no., 2nd col: route IDs, 3rd col: Obj Func Value, 
 % 4th col: Fitness Value, 5th col: route string
 
-%g = 1;
+g = 1;
 % Rows
 fprintf('\n');
 
-%while (g <= population_size)
-%    [route_set_IDs,route_set] = generateInitialRouteSet(DistanceMatrix, BusRouteID, TotalNoOfRoutes, s, min_route_length, max_route_length);
+while (g <= population_size)
+    [route_set_IDs,route_set] = generateInitialRouteSet(DistanceMatrix, BusRouteID, TotalNoOfRoutes, s, min_route_length, max_route_length);
     % Make sure that the route set is connected
-%    connected = checkConnectedness(route_set,s,n);
-%    if (connected == 0)
+    connected = checkConnectedness(route_set,s,n);
+    if (connected == 0)
         %disp("Route set is not connected.");
-%        continue
-%    else
-%        fprintf('route set %d is connected...',g);
-        %disp("Route set is connected.");
-%    end
+        continue
+    else
+        fprintf('route set %d is connected...',g);
+    end
     
-%    fprintf('generating route set time matrix...');
-%    rs_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
-    % Make sure that the route set time matrix has no Inf value
-%    if (ismember(inf,rs_TimeMatrix) == 1)
-%        continue
-%    else
-%        fprintf('route set time matrix has no inf value(s)...');
-%    end
-%    route_set_Cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rs_TimeMatrix,n);
+    fprintf('generating route set time matrix...');
+    rs_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    route_set_Cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rs_TimeMatrix,n);
 
-%    initial_pop_matrix{g,1} = g;
-%    initial_pop_matrix{g,2} = transpose(route_set_IDs);
-%    initial_pop_matrix{g,3} = route_set_Cost; 
-%    initial_pop_matrix{g,4} = route_set_Cost; 
+    initial_pop_matrix{g,1} = g;
+    initial_pop_matrix{g,2} = transpose(route_set_IDs);
+    initial_pop_matrix{g,3} = route_set_Cost; 
+    initial_pop_matrix{g,4} = route_set_Cost; 
 
     % Convert to String
-%    string_length = s*n;            % Note: Demarcation Line is at the end of every nth node
-%    route_set_string = zeros(1,string_length);
-%    y1=1; y2=n;
-%    for q=1:s 
-%        route_set_string(1,y1:y2)= route_set{q,1};
-%        y1=y1+n; y2=y2+n;
-%    end
-%    initial_pop_matrix{g,5} = route_set_string;
-%    g = g + 1;
-%end
-%fprintf('\n');
+    string_length = s*n;            % Note: Demarcation Line is at the end of every nth node
+    route_set_string = zeros(1,string_length);
+    y1=1; y2=n;
+    for q=1:s 
+        route_set_string(1,y1:y2)= route_set{q,1};
+        y1=y1+n; y2=y2+n;
+    end
+    initial_pop_matrix{g,5} = route_set_string;
+    g = g + 1;
+end
+fprintf('\n');
 
 %disp("Initial Population Matrix"); disp(initial_pop_matrix);
-%save('RouteSetsGenerated.mat','initial_pop_matrix','-mat')
+save('RouteSetsGenerated.mat','initial_pop_matrix','-mat')
 load('RouteSetsGenerated.mat','initial_pop_matrix');
 disp(initial_pop_matrix);
 
@@ -99,6 +96,13 @@ for g=1:population_size
     pop(g).Position=initial_pop_matrix{g,5};
     pop(g).Cost=initial_pop_matrix{g,3};
 end
+
+% Plot ObjFuncValues of Initial Population
+%figure(1);
+%norm_costs = PlotCosts(pop);
+%title('Initial Population');
+%pause(0.01);
+
 
 % Non-Dominated Sorting
 [pop, F]=NonDominatedSorting(pop);  %disp("Non-Dominated Sorting"); disp("pop"); disp(F);
@@ -144,20 +148,8 @@ for iter=1:max_no_of_generations
         end
 
         rsce1_TimeMatrix = getRouteSetTimeMatrix0(route_set_1,s,TimeMatrix, transfer_time);
-        % Make sure that the route set time matrix has no Inf value
-        if (ismember(inf,rsce1_TimeMatrix) == 1)
-            continue
-        else
-            fprintf('route set time matrix has no inf value(s)...');
-        end
         route_set_1_cost = getObjectiveFunctionValue(route_set_1,TravelDemandMatrix,DistanceMatrix,rsce1_TimeMatrix,n);
         rsce2_TimeMatrix = getRouteSetTimeMatrix0(route_set_2,s,TimeMatrix, transfer_time);
-        % Make sure that the route set time matrix has no Inf value
-        if (ismember(inf,rsce2_TimeMatrix) == 1)
-            continue
-        else
-            fprintf('route set time matrix has no inf value(s)...');
-        end
         route_set_2_cost = getObjectiveFunctionValue(route_set_2,TravelDemandMatrix,DistanceMatrix,rsce2_TimeMatrix,n);
         
         popc(k).Position = new_route_set_1;
@@ -186,20 +178,7 @@ for iter=1:max_no_of_generations
         [new_route_set]=Intra_Crossover(p1.Position,s,n);      %disp(popc(k).Position)
         %cost
         route_set = stringToRoutes(new_route_set,s,n); 
-        % Make sure that the route set is connected
-        connected = checkConnectedness(route_set,s,n);
-        if (connected == 0)
-            continue
-        else
-            fprintf('\nroute set is connected...');
-        end
         rsca_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
-        % Make sure that the route set time matrix has no Inf value
-        if (ismember(inf,rsca_TimeMatrix) == 1)
-            continue
-        else
-            fprintf('route set time matrix has no inf value(s)...');
-        end
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsca_TimeMatrix,n);
 
         popc(k).Position = new_route_set;
@@ -227,16 +206,10 @@ for iter=1:max_no_of_generations
         connected = checkConnectedness(route_set,s,n);
         if (connected == 0)
             continue
-        else
-            fprintf('\nroute set is connected...');
+        %else
+            %fprintf('\nroute set is connected...');
         end
         rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
-        % Make sure that the route set time matrix has no Inf value
-        if (ismember(inf,rsm_TimeMatrix) == 1)
-            continue
-        else
-            fprintf('route set time matrix has no inf value(s)...');
-        end
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
         popm(k).Position = new_route_set;
         popm(k).Cost = route_set_cost;
@@ -250,6 +223,28 @@ for iter=1:max_no_of_generations
          popc
          popm];         
     %disp("pop"); disp(pop);
+
+    
+    if (incorporate_metro == 1)
+        for k=1:length(pop)
+            route_string = [pop(k).Position metro_line];
+            s1 = 26; n1 = 149;
+            route_set = stringToRoutes(route_string,s1,n1);
+            rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s1,TimeMatrix, transfer_time);
+            route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n1);
+            pop(k).Cost = route_set_cost;
+        end
+    end
+
+    % Normalize costs
+    Costs=[pop.Cost];
+    norm_cost_1 = normalize(Costs(1,:));
+    norm_cost_2 = normalize(Costs(2,:));
+    norm_costs = [norm_cost_1; norm_cost_2]';
+    %disp(norm_costs);
+    for k=1:length(pop)
+        pop(k).Cost = norm_costs(k,:)';
+    end
 
     % Non-Dominated Sorting
     [pop, F]=NonDominatedSorting(pop);
@@ -282,37 +277,75 @@ for iter=1:max_no_of_generations
    
 end
 
-    % Pareto Front
-    front_pop = cell(numel(F1),2);
-    for g=1:numel(F1)
-        front_pop{g,1}=F1(g).Position; %disp(front_pop{g,1});
-        front_pop{g,2}=norm_costs(g,:);
+% Pareto Front
+front_pop = cell(numel(F1),2);
+for g=1:numel(F1)
+    front_pop{g,1}=F1(g).Position; %disp(front_pop{g,1});
+    front_pop{g,2}=norm_costs(g,:);
+end
+
+% Display Route Sets 
+fprintf('\n\nRoute Sets in Pareto-optimal Front: \n'); 
+for g=1:numel(F1)
+    fprintf('\nRoute Set no. %d: \n', g); 
+    if (incorporate_metro == 1)
+        route_string = [front_pop{g,1} metro_line];
+        s = 26; n = 149;
+        route_set = stringToRoutes(route_string,s,n);
+        rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+        route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
+        front_pop{g,1} = route_string;
+        front_pop{g,2} = route_set_cost;
+        F1(g).Cost = route_set_cost;            % actual costs
     end
+    Sr=stringToRoutes(front_pop{g,1},s,n);
+    for a=1:s
+        fprintf(' Route %d:', a); 
+        br = functionRoute(Sr{a,1});
+        displayRoute(br);
+    end
+    fprintf('Costs: \n'); disp(front_pop{g,2}); % actual costs
+    % Plot Route Sets
+    figure(2);
+    plotRouteSet(network_name,Sr,s,n);
+    pause(0.5);
+end
 
-    % Display Route Sets 
-    fprintf('\n\nRoute Sets in Pareto-optimal Front: \n'); 
-    for g=1:numel(F1)
-        fprintf('\nRoute Set no. %d: \n', g); 
-        Sr=stringToRoutes(front_pop{g,1},s,n);
-        for a=1:s
-            fprintf(' Route %d:', a); 
-            br = functionRoute(Sr{a,1});
-            displayRoute(br);
-        end
-        fprintf('Costs: \n'); disp(front_pop{g,2});
-        % Plot Route Sets
-        figure(2);
-        plotRouteSet(network_name,Sr,s,n);
-        pause(0.5);
-    end  
+% Plot F1 Actual Costs
+figure(3);
+costs = PlotCosts(F1);
+pause(0.01);
 
-    % Plot F1 Costs of the Latest Generation of Solutions
-    %figure(2);
-    %plot(norm_costs(:,1),norm_costs(:,2),'r*','MarkerSize',8);
-    %xlabel('1^{st} Objective');
-    %ylabel('2^{nd} Objective');
-    %title('Non-dominated Solutions (F_{1})');
-    %grid on;
+% Plot All Population Actual Costs
+all_pop = cell(numel(pop),2);
+for g=1:numel(pop)
+    all_pop{g,1}=pop(g).Position; %disp(front_pop{g,1});
+    all_pop{g,2}=pop(g).Cost;
+end
+for g=1:length(pop)
+    if (incorporate_metro == 1)
+        route_string = [all_pop{g,1} metro_line];
+        s = 26; n = 149;
+        route_set = stringToRoutes(route_string,s,n);
+        rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+        route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
+        all_pop{g,1} = route_string;
+        all_pop{g,2} = route_set_cost;
+        pop(g).Cost = route_set_cost;   % actual costs
+    end
+end
+figure(4);
+costs = PlotCosts(pop);
+pause(0.01);
+title('Population Costs');
+
+% Plot F1 Costs of the Latest Generation of Solutions
+%figure(2);
+%plot(norm_costs(:,1),norm_costs(:,2),'r*','MarkerSize',8);
+%xlabel('1^{st} Objective');
+%ylabel('2^{nd} Objective');
+%title('Non-dominated Solutions (F_{1})');
+%grid on;
 
 end
     

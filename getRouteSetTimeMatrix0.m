@@ -5,6 +5,7 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
     % Initialization
     SolutionTimeMatrix = Inf([n,n]);
     %disp("Initialization"); disp(SolutionTimeMatrix);
+    %disp("s"); disp(s); disp(n);
     
     % Listing the routes in S0 in Matrix Form
     B = zeros(s,n);
@@ -25,8 +26,7 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
     end
     end
 
-    %disp("SolutionTimeMatrix After Case 1");
-    %disp(SolutionTimeMatrix); 
+    %disp("SolutionTimeMatrix Before Case 1"); disp(SolutionTimeMatrix); 
     
     % 2. Identifying Routes which contain Node i and Node j, respectively 
     %    and Case 1: No Transfer is Needed
@@ -69,7 +69,6 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
                 for w = 1:c1
                     p1 = crn(1,w);
                     common_route = functionRoute(B(p1,:));
-                    %crn(2,w) = computeTijCase1(i,j,common_route, waiting_time, TimeMatrix);
                     crn(2,w) = computeTijCase1(i,j,common_route, TimeMatrix);
                 end
                 %disp("Case 1: No Transfer is Needed");
@@ -86,12 +85,12 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
                     routei = functionRoute(B(pi,:)); 
                     routej = functionRoute(B(pj,:));                            
                     %disp("Are there common nodes?");disp(sum(ismember(routei,routej)));
+                    
                     if (sum(ismember(routei,routej)) > 0)   % there is at least one common node
                         % Case 2: One Transfer is Needed
                         %disp("Case 2: One Transfer is Needed"); 
                         crn2(1,f4) = pi;
                         crn2(2,f4) = pj;
-                        %crn2(3,f4) = computeTijCase2(i,j, routei, routej, waiting_time, transfer_time, TimeMatrix);
                         crn2(3,f4) = computeTijCase2(i,j, routei, routej, transfer_time, TimeMatrix);
                         f4 = f4+1;
                         %disp("crn2"); disp(crn2);
@@ -100,11 +99,12 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
                 end
                 end                 
             end
-    	%end
         end
     end
     
     %disp("SolutionTimeMatrix After Cases 1 and 2");
+    
+    %disp("No. of Inf after Case 2:"); disp(sum(sum(ismember(SolutionTimeMatrix,inf))));
     %disp(SolutionTimeMatrix); 
     
         
@@ -167,7 +167,6 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
                         crn3(1,f7) = pi3;
                         crn3(2,f7) = ptf;
                         crn3(3,f7) = pj3;
-                        %crn3(4,f7) = computeTijCase3(i,j,routei, routef, routej, waiting_time, transfer_time, TimeMatrix);
                         crn3(4,f7) = computeTijCase3(i,j,routei, routef, routej, transfer_time, TimeMatrix);
                         f7 = f7 + 1;
                     end                               
@@ -181,17 +180,8 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
          end
     end
     end
-    
-    for i=1:n
-    for j=1:n
-         if ( abs(i-j) > 0 ) 
-            if (SolutionTimeMatrix(i,j) == 0)
-                SolutionTimeMatrix(i,j) = Inf;
-            end
-         end
-    end
-    end
 
-    %disp("SolutionTimeMatrix After Case 3");
-    %disp(SolutionTimeMatrix);      
+    %disp('No. of Inf after Case 3:'); disp(sum(sum(ismember(SolutionTimeMatrix,inf))));
+    %disp(SolutionTimeMatrix);
+    
 end

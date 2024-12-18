@@ -11,19 +11,19 @@
 % Contact Info: sm.kalami@gmail.com, info@yarpiz.com
 %
 
-function norm_costs = PlotCosts(pop)
+function costs = PlotCosts(pop)
 
     Costs=[pop.Cost];
     %disp(Costs);
-    norm_cost_1 = Costs(1,:); %normalize(Costs(1,:)); 
-    norm_cost_2 = Costs(2,:); %normalize(Costs(2,:)); 
-    norm_costs = [norm_cost_1; norm_cost_2]';
+    cost_1 = Costs(1,:);    % normalize(Costs(1,:));
+    cost_2 = Costs(2,:);    % normalize(Costs(2,:));
+    costs = [cost_1; cost_2]';
 
-    plot(norm_cost_1,norm_cost_2,'r*','MarkerSize',8);
+    plot(cost_1,cost_2,'m.','MarkerSize',15);
     %plot(Costs(1,:),Costs(2,:),'r*','MarkerSize',8);
     
-    xlabel('1^{st} Objective');
-    ylabel('2^{nd} Objective');
+    xlabel('Passenger Objective');
+    ylabel('Operator Objective');
     title('Non-dominated Solutions (F_{1})');
     grid on;
 

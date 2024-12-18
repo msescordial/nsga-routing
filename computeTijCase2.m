@@ -29,14 +29,12 @@ function [tij]=computeTijCase2(i,j, routei, routej, transfer_time, TimeMatrix)
     
     % 1st row of M  
     for a=1:length(h)
-        %[tih]=tijCase1(i,h(a),routei, waiting_time, TimeMatrix);
         [tih]=tijCase1(i,h(a),routei, TimeMatrix);
         M(1,a)=tih;
     end
     
     % 2nd row of M
     for b=1:length(h)
-        %[thj]=tijCase1(h(b),j,routej, waiting_time, TimeMatrix);
         [thj]=tijCase1(h(b),j,routej, TimeMatrix);
         M(2,b)=thj;
     end

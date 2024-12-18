@@ -135,9 +135,9 @@ end
 
 
 
-%% Network: Manila_3 (Import datasets)
+%% Network: Metro_Manila (Import datasets)
 
-if (network_name == "manila_3")
+if (network_name == "metro_manila")
     
     size = 144;     % no. of nodes
     % T
@@ -232,7 +232,8 @@ if (network_name == "manila_3")
     P = graph(edge_start, edge_end, weight);
     
     g = plot(P,'XData',x,'YData',y,'NodeFontWeight','bold', 'Marker','o', ...
-        'MarkerSize',4,'LineWidth',0.5,'EdgeLabel',P.Edges.Weight);
+        'MarkerSize',4,'LineWidth',0.5);
+    %'EdgeLabel',P.Edges.Weight
 
     TerminalNodes = [2, 4, 7, 34, 39, 94, 113, 106, 95, 5, 100, 58, 66, 83, 103, 119, 121, 126, 43, 47, 72, 51, 8, 9, 17, 19, 21, 55, 114, 107, 143, 123, 29, 14, 44];
     highlight(g, TerminalNodes, 'NodeColor', 'g');

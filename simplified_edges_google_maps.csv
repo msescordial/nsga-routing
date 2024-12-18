@@ -8,7 +8,7 @@ s,t,time_min,distance_km
 A.Mabini Avenue,Lapu-Lapu Avenue,5,2
 Abad Santos,Blumentritt Road,4,0.95
 Alabang,SM Center Muntinlupa,14,4.5
-Alabang,Tramo,32,10.4
+Alabang,RobinsonsLas Pinas,23,6.1
 Alabang,Sucat Exit,4,4.1
 Amparo,SM Fairview,7,2.7
 Amparo,Pangarap,5,1.9
@@ -24,7 +24,7 @@ Arsenio H. Lacson Avenue,Espana,2,0.55
 Arsenio H. Lacson Avenue,FEU,4,1
 Ayala Avenue,Makati Avenue,4,1.3
 Ayala Avenue,Buendia Avenue,7,0.9
-Balintawak Bus Terminal,Roosevelt - Quezon,4,2.3
+Balintawak Bus Terminal,Kaingin Road,2,1.1
 Balintawak Bus Terminal,VGC,7,5.9
 Balintawak Bus Terminal,Sgt. Rivera,4,1.5
 Banawe,Rotonda,3,0.9
@@ -72,7 +72,7 @@ Chinese General Hospital,Sgt. Rivera,9,2.5
 City of Dreams,DFA,2,0.7
 City of Dreams,Pitx,8,2.3
 Cubao,GMA-Kamuning MRT,5,1.7
-Cubao,Robinsons Galleria,11,3.4
+EDSA-Shaw,Robinsons Galleria,3,1.4
 Cubao,K. Hari,7,2.2
 Cubao,Katipunan Avenue,17,2.9
 Dagat Dagatan,Lapu-Lapu Avenue,2,0.35
@@ -86,11 +86,13 @@ Doroteo Jose - Recto,Tayuman,5,1.5
 Doroteo Jose - Recto,Lawton,3,1.2
 Doroteo Jose - Recto,Isetann Recto,1,0.3
 EDSA Carousel - Buendia,Makati Avenue,4,1.1
+EDSA Carousel - Buendia,Edsa Bus Carousel Guadalupe Bridge,5,2
 EDSA Carousel - Buendia,Glorietta 5,2,0.9
 EDSA Taft Avenue,Libertad,5,1.2
 EDSA Taft Avenue,Magallanes Bus Stop,7,2.3
 EDSA Taft Avenue,Heritage Hotel,6,0.9
 EDSA Taft Avenue,NAIA Terminal 3,12,3.3
+EDSA-Shaw,Edsa Bus Carousel Guadalupe Bridge,3,1.6
 EDSA-Shaw,Shaw Center Mall,5,2.1
 Emerald Avenue,Robinsons Galleria,2,0.7
 FEU,Isetann Recto,1,0.18
@@ -134,6 +136,7 @@ Mindanao - Congressional,Shorthorn Street,4,1.4
 Mindanao - Congressional,Visayas Avenue,4,1.1
 Mindanao Avenue - Fairview,Regalado Avenue,9,2.6
 Mindanao Avenue - Fairview,Zabarte Road,4,1.4
+Monumento,Balintawak Bus Terminal,4,1.8
 Monumento,Victoneta Avenue,4,1.3
 Moriones Street,Recto Avenue,3,1.3
 Nagtahan,Old Sta. Mesa Street,3,1.3
@@ -159,14 +162,19 @@ Quezon Memorial Circle,SM North EDSA,8,3
 Quezon Memorial Circle,Visayas Avenue,6,3
 Quirino Avenue - Manila,United Nations Avenue,4,1.5
 Quirino Avenue - Quezon,Tandang Sora - Mindanao,3,1.7
+Robinsons Galleria,Santolan,3,1.9
 Roosevelt - Quezon,Shorthorn Street,3,1.6
+Roosevelt - Quezon,Kaingin Road,2,0.9
 Roosevelt - Quezon,SM North EDSA,2,0.8
-SM City Sucat,Sucat Exit,12,6.7
+Santolan,Cubao,3,1.5
+SM City Sucat,Waltermart Sucat,5,2.1
 SM City Sucat,Sto. Nino,5,2.5
 SM Fairview,Zabarte Road,5,2.3
 SM Marikina,Sta. Lucia East Grand Mall Cainta,3,1.8
 SM North EDSA,Veterans Memorial Medical Center,8,3.7
+Tramo,RobinsonsLas Pinas,11,4.4
 Tandang Sora - Congressional,Visayas Avenue,2,0.65
 Zabarte Road,Camarin,14,4.2
 Bagong Silang Market,Camarin,3,0.7
 Novaliches Terminal,Zabarte Road,4,1
+Waltermart Sucat,Sucat Exit,17,6.1
