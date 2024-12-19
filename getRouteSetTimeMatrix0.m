@@ -184,4 +184,85 @@ function SolutionTimeMatrix = getRouteSetTimeMatrix0(S0r,s,TimeMatrix, transfer_
     %disp('No. of Inf after Case 3:'); disp(sum(sum(ismember(SolutionTimeMatrix,inf))));
     %disp(SolutionTimeMatrix);
     
+    % Case 4: Three Transfers are Needed
+    for i=1:n
+    for j=1:n
+         if ( abs(i-j) > 0 ) 
+         if (SolutionTimeMatrix(i,j) == Inf) 
+            %disp("Case 4");
+            %disp("i"); disp(i); disp("j"); disp(j);
+            f8 = 1;
+            f9 = 1;
+            rin = zeros(1,f8);       % vector which stores the routei nos.
+            rjn = zeros(1,f9);       % vector which stores the routej nos.
+            for p2=1:s
+                routep = functionRoute(B(p2,:));  
+                mi = ismember(routep,i);
+                mj = ismember(routep,j);                   
+                if (sum(mi) == 1)       % node i is in route p2
+                    rin(1,f8) = p2;
+                    f8 = f8+1;
+                end
+                if (sum(mj) == 1)       % node j is in route p2
+                    rjn(1,f9) = p2;
+                    f9 = f9+1;
+                end
+            end   
+            %disp("i"); disp(i); disp("j"); disp(j); 
+            %disp("Routes containing i"); disp(rin); disp("Routes containing j"); disp(rjn);
+            
+            for u4 = 1: length(rin)
+            for v4 = 1: length(rjn)
+            	pi4 = rin(1,u4); 
+                pj4 = rjn(1,v4);
+                routei = functionRoute(B(pi4,:));
+                routej = functionRoute(B(pj4,:)); 
+                
+                %disp("Case 4: Three Transfers are Needed");
+                
+                % getting the possible transfer routes (in pairs)
+                % (excluding pi4 and pj4)
+                f10 = 1;
+                tr = zeros(1,f10);
+                for g=1:s
+                    if ( abs(g - pi4) > 0 && abs(g - pj4) > 0)
+                        tr(1,f10) = g;
+                        f10 = f10 + 1;
+                    end
+                end              
+                tr2 = nchoosek(tr,2)';
+                %disp("Possible Transfer Routes"); disp(tr2);
+                
+                f11=1;
+                crn4 = zeros(5,f11);
+                
+                [r c] = size(tr2);
+                for g1 = 1:c
+                	ptf1 = tr2(1,g1);
+                    ptf2 = tr2(2,g1);
+                    routetf1 = functionRoute(B(ptf1,:));
+                    routetf2 = functionRoute(B(ptf2,:));
+                    if (sum(ismember(routei,routetf1))>0 && sum(ismember(routetf1,routetf2))>0 && sum(ismember(routetf2,routej))>0) 
+                        routef1 = routetf1;
+                        routef2 = routetf2;
+                        crn4(1,f11) = pi4;
+                        crn4(2,f11) = ptf1;
+                        crn4(3,f11) = ptf2;
+                        crn4(4,f11) = pj4;
+                        crn4(5,f11) = computeTijCase4(i,j,routei, routef1, routef2, routej, transfer_time, TimeMatrix);
+                        f11 = f11 + 1;
+                    end                               
+                end
+                %disp("crn4"); disp(crn4);
+                SolutionTimeMatrix(i,j) = min(crn4(5,:));
+            end
+            end
+                   
+         end            
+         end
+    end
+    end
+
+    %disp("No. of Inf after Case 4:"); disp(sum(sum(ismember(SolutionTimeMatrix,inf))));
+    %disp(SolutionTimeMatrix); 
 end

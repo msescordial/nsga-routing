@@ -16,7 +16,7 @@ function [front_pop] = NSGA_2(min_route_length, max_route_length, network_name, 
     TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro)
 
 %% ----- Parameters -----
-max_no_of_generations = 3;       % maximum no. of generations (200)
+max_no_of_generations = 20;       % maximum no. of generations (200)
 population_size = 20;             % (100)
 P_ce = 0.5;             % inter-crossover probability
 P_ca = 0.5;             % intra-crossover probability
@@ -223,8 +223,8 @@ for iter=1:max_no_of_generations
          popc
          popm];         
     %disp("pop"); disp(pop);
-
-    
+   
+    % Recompute Costs
     if (incorporate_metro == 1)
         for k=1:length(pop)
             route_string = [pop(k).Position metro_line];
@@ -234,14 +234,23 @@ for iter=1:max_no_of_generations
             route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n1);
             pop(k).Cost = route_set_cost;
         end
+    elseif (sum(metro_line) == 0)
+        for k=1:length(pop)
+            route_string = [pop(k).Position];
+            route_set = stringToRoutes(route_string,s,n);
+            rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+            route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
+            pop(k).Cost = route_set_cost;
+        end
     end
 
     % Normalize costs
     Costs=[pop.Cost];
+    %disp("NOT Normalized Costs"); disp(Costs');
     norm_cost_1 = normalize(Costs(1,:));
     norm_cost_2 = normalize(Costs(2,:));
     norm_costs = [norm_cost_1; norm_cost_2]';
-    %disp(norm_costs);
+    %disp("Normalized Costs"); disp(norm_costs);
     for k=1:length(pop)
         pop(k).Cost = norm_costs(k,:)';
     end
@@ -288,23 +297,28 @@ end
 fprintf('\n\nRoute Sets in Pareto-optimal Front: \n'); 
 for g=1:numel(F1)
     fprintf('\nRoute Set no. %d: \n', g); 
-    if (incorporate_metro == 1)
+    fprintf('Normalized Costs: \n'); disp(front_pop{g,2}); 
+    if (incorporate_metro == 1)                  % network: manila
         route_string = [front_pop{g,1} metro_line];
         s = 26; n = 149;
         route_set = stringToRoutes(route_string,s,n);
-        rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
-        route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
-        front_pop{g,1} = route_string;
-        front_pop{g,2} = route_set_cost;
-        F1(g).Cost = route_set_cost;            % actual costs
+    elseif (sum(metro_line) == 0)                % metro_line == [], network: mandl OR india
+        route_string = [front_pop{g,1}];
+        route_set = stringToRoutes(route_string,s,n);
     end
+    rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
+    front_pop{g,1} = route_string;
+    front_pop{g,2} = route_set_cost;
+    F1(g).Cost = route_set_cost;            % actual costs
+    
     Sr=stringToRoutes(front_pop{g,1},s,n);
     for a=1:s
         fprintf(' Route %d:', a); 
         br = functionRoute(Sr{a,1});
         displayRoute(br);
     end
-    fprintf('Costs: \n'); disp(front_pop{g,2}); % actual costs
+    fprintf('Costs: \n'); disp(front_pop{g,2}); 
     % Plot Route Sets
     figure(2);
     plotRouteSet(network_name,Sr,s,n);
@@ -315,29 +329,33 @@ end
 figure(3);
 costs = PlotCosts(F1);
 pause(0.01);
+title('F1 Actual Costs');
 
-% Plot All Population Actual Costs
+% Plot Final Population Actual Costs
 all_pop = cell(numel(pop),2);
 for g=1:numel(pop)
     all_pop{g,1}=pop(g).Position; %disp(front_pop{g,1});
     all_pop{g,2}=pop(g).Cost;
 end
 for g=1:length(pop)
-    if (incorporate_metro == 1)
+    if (incorporate_metro == 1)                  % network: manila
         route_string = [all_pop{g,1} metro_line];
         s = 26; n = 149;
         route_set = stringToRoutes(route_string,s,n);
-        rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
-        route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
-        all_pop{g,1} = route_string;
-        all_pop{g,2} = route_set_cost;
-        pop(g).Cost = route_set_cost;   % actual costs
+    elseif (sum(metro_line) == 0)                % metro_line == [], network: mandl OR india
+        route_string = [all_pop{g,1}];
+        route_set = stringToRoutes(route_string,s,n);
     end
+    rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
+    all_pop{g,1} = route_string;
+    all_pop{g,2} = route_set_cost;
+    pop(g).Cost = route_set_cost;   % actual costs
 end
 figure(4);
 costs = PlotCosts(pop);
 pause(0.01);
-title('Population Costs');
+title('Final Population Costs');
 
 % Plot F1 Costs of the Latest Generation of Solutions
 %figure(2);
