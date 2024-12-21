@@ -40,9 +40,15 @@ function real_routes(TravelDemandMatrix, DistanceMatrix, TimeMatrix, transfer_ti
     route_set = S0r;
     %disp(route_set);
 
+    % Plot Route Set
+    figure(5);
+    plotRouteSet("metro_manila",route_set,26,149);
+    title('Real-world route set');
+
     SolutionTimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
     %disp(SolutionTimeMatrix);
     E0 = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,SolutionTimeMatrix,n);
     fprintf('\n Objective 1: %.6f, Objective 2: %.6f \n', E0(1,1), E0(2,1));
+
 end
 
