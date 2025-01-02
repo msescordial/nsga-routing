@@ -16,11 +16,11 @@ function [front_pop] = NSGA_2(min_route_length, max_route_length, network_name, 
     TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro)
 
 %% ----- Parameters -----
-max_no_of_generations = 20;       % maximum no. of generations (200)
-population_size = 20;             % (100)
+max_no_of_generations = 100;       % maximum no. of generations (200)
+population_size = 100;             % (100)
 P_ce = 0.5;             % inter-crossover probability
 P_ca = 0.5;             % intra-crossover probability
-P_m = 0.05;             % mutation probability
+P_m = 0.2;              % mutation probability
 
 %% ----- INITIALIZATION -----
 % GENERATE CANDIDATE ROUTES
@@ -68,6 +68,10 @@ while (g <= population_size)
     fprintf('generating route set time matrix...');
     rs_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
     route_set_Cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rs_TimeMatrix,n);
+    % Make sure that the two Objective Function Values have no Inf value
+    if (ismember(inf,route_set_Cost) == 1 || ismember(NaN,route_set_Cost) == 1)
+        continue
+    end
 
     initial_pop_matrix{g,1} = g;
     initial_pop_matrix{g,2} = transpose(route_set_IDs);
@@ -143,14 +147,16 @@ for iter=1:max_no_of_generations
         connected_2 = checkConnectedness(route_set_2,s,n);
         if (connected_1 + connected_2 < 2)
             continue
-        %else
-            %fprintf('\nroute set is connected...');
         end
 
         rsce1_TimeMatrix = getRouteSetTimeMatrix0(route_set_1,s,TimeMatrix, transfer_time);
         route_set_1_cost = getObjectiveFunctionValue(route_set_1,TravelDemandMatrix,DistanceMatrix,rsce1_TimeMatrix,n);
         rsce2_TimeMatrix = getRouteSetTimeMatrix0(route_set_2,s,TimeMatrix, transfer_time);
         route_set_2_cost = getObjectiveFunctionValue(route_set_2,TravelDemandMatrix,DistanceMatrix,rsce2_TimeMatrix,n);
+        % Make sure that the two Objective Function Values have no Inf value
+        if (ismember(inf,route_set_1_cost) == 1 || ismember(NaN,route_set_1_cost) == 1 || ismember(inf,route_set_2_cost) == 1 || ismember(NaN,route_set_2_cost) == 1)
+            continue
+        end
         
         popc(k).Position = new_route_set_1;
         popc(k+1).Position = new_route_set_2;
@@ -159,7 +165,9 @@ for iter=1:max_no_of_generations
 
         k = k+2;
     end
-    popc=popc(:);    %disp("popc"); disp(popc);      
+    popc=popc(:);    %disp("popc"); disp(popc);    
+
+    fprintf("\nInter-String Crossover done.");
 
     
     % Intra-string
@@ -178,8 +186,17 @@ for iter=1:max_no_of_generations
         [new_route_set]=Intra_Crossover(p1.Position,s,n);      %disp(popc(k).Position)
         %cost
         route_set = stringToRoutes(new_route_set,s,n); 
+        % Make sure that the route set is connected
+        connected = checkConnectedness(route_set,s,n);
+        if (connected == 0)
+            continue
+        end
         rsca_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsca_TimeMatrix,n);
+        % Make sure that the two Objective Function Values have no Inf value
+        if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
+            continue
+        end        
 
         popc(k).Position = new_route_set;
         popc(k).Cost = route_set_cost;
@@ -187,6 +204,8 @@ for iter=1:max_no_of_generations
         k = k+1;
     end
     popc=popc(:);       %disp(popc);
+
+    fprintf("\nIntra-String Crossover done.");
        
 
     % MUTATION
@@ -206,16 +225,21 @@ for iter=1:max_no_of_generations
         connected = checkConnectedness(route_set,s,n);
         if (connected == 0)
             continue
-        %else
-            %fprintf('\nroute set is connected...');
         end
         rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
+        % Make sure that the two Objective Function Values have no Inf value
+        if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
+            continue
+        end  
+
         popm(k).Position = new_route_set;
         popm(k).Cost = route_set_cost;
         k = k + 1;
     end
     popm=popm(:);       %disp("popm"); disp(popm);
+
+    fprintf("\nMutation done.\n");
        
 
     % MERGE
