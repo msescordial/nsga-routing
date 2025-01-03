@@ -54,19 +54,19 @@ function [tij]=computeTijCase3(i,j,routei, routef, routej, transfer_time, TimeMa
       
     % 3rd row of M  
     for a=1:k1*k2
-        [tih1]=tijCase1(i,M(1,a),routei, TimeMatrix);
+        [tih1]=computeTijCase1(i,M(1,a),routei, TimeMatrix);
         M(3,a)=tih1;
     end 
     
     % 4th row of M
     for b=1:k1*k2
-        [th1h2]=tijCase1(M(1,b),M(2,b),routef, TimeMatrix);
+        [th1h2]=computeTijCase1(M(1,b),M(2,b),routef, TimeMatrix);
         M(4,b)=th1h2;
     end
     
     % 5th row of M
     for c=1:k1*k2
-        [th2j]=tijCase1(M(2,c),j,routej, TimeMatrix);
+        [th2j]=computeTijCase1(M(2,c),j,routej, TimeMatrix);
         M(5,c)=th2j;
     end
     
