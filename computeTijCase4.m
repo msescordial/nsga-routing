@@ -60,13 +60,13 @@ function [tij]=computeTijCase4(i,j,routei, routef1, routef2, routej, transfer_ti
       
     % 4th to 7th row of M  
     for a=1:k1*k2*k3
-        [tih1]=tijCase1(i,M(1,a),routei, TimeMatrix);
+        [tih1]=computeTijCase1(i,M(1,a),routei, TimeMatrix);
         M(4,a)=tih1;
-        [th1h2]=tijCase1(M(1,a),M(2,a),routef1, TimeMatrix);
+        [th1h2]=computeTijCase1(M(1,a),M(2,a),routef1, TimeMatrix);
         M(5,a)=th1h2;
-        [th2h3]=tijCase1(M(2,a),M(3,a),routef2, TimeMatrix);
+        [th2h3]=computeTijCase1(M(2,a),M(3,a),routef2, TimeMatrix);
         M(6,a)=th2h3;
-        [th3j]=tijCase1(M(3,a),j,routej, TimeMatrix);
+        [th3j]=computeTijCase1(M(3,a),j,routej, TimeMatrix);
         M(7,a)=th3j;
     end
     
