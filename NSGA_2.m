@@ -20,7 +20,7 @@ max_no_of_generations = 100;       % maximum no. of generations (200)
 population_size = 100;             % (100)
 P_ce = 0.5;             % inter-crossover probability
 P_ca = 0.5;             % intra-crossover probability
-P_m = 0.2;              % mutation probability
+P_m = 0.05;              % mutation probability
 
 %% ----- INITIALIZATION -----
 % GENERATE CANDIDATE ROUTES
@@ -45,7 +45,7 @@ empty_individual.DominatedCount=[];
 empty_individual.CrowdingDistance=[];
 pop=repmat(empty_individual,population_size,1);
 
-% GENERATE INITIAL POPULATION
+%% GENERATE INITIAL POPULATION
 initial_pop_matrix = cell(population_size,5);
 % 1st col: no., 2nd col: route IDs, 3rd col: Obj Func Value, 
 % 4th col: Fitness Value, 5th col: route string
@@ -66,7 +66,7 @@ while (g <= population_size)
     end
     
     fprintf('generating route set time matrix...');
-    rs_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    [rs_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
     route_set_Cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rs_TimeMatrix,n);
     % Make sure that the two Objective Function Values have no Inf value
     if (ismember(inf,route_set_Cost) == 1 || ismember(NaN,route_set_Cost) == 1)
@@ -149,9 +149,9 @@ for iter=1:max_no_of_generations
             continue
         end
 
-        rsce1_TimeMatrix = getRouteSetTimeMatrix0(route_set_1,s,TimeMatrix, transfer_time);
+        [rsce1_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set_1,s,TimeMatrix, transfer_time);
         route_set_1_cost = getObjectiveFunctionValue(route_set_1,TravelDemandMatrix,DistanceMatrix,rsce1_TimeMatrix,n);
-        rsce2_TimeMatrix = getRouteSetTimeMatrix0(route_set_2,s,TimeMatrix, transfer_time);
+        [rsce2_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set_2,s,TimeMatrix, transfer_time);
         route_set_2_cost = getObjectiveFunctionValue(route_set_2,TravelDemandMatrix,DistanceMatrix,rsce2_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_1_cost) == 1 || ismember(NaN,route_set_1_cost) == 1 || ismember(inf,route_set_2_cost) == 1 || ismember(NaN,route_set_2_cost) == 1)
@@ -191,7 +191,7 @@ for iter=1:max_no_of_generations
         if (connected == 0)
             continue
         end
-        rsca_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+        [rsca_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsca_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
@@ -226,7 +226,7 @@ for iter=1:max_no_of_generations
         if (connected == 0)
             continue
         end
-        rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+        [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
@@ -250,21 +250,24 @@ for iter=1:max_no_of_generations
    
     % Recompute Costs
     if (incorporate_metro == 1)
+        A = zeros(1,length(pop));
         for k=1:length(pop)
             route_string = [pop(k).Position metro_line];
             s1 = 26; n1 = 149;
             route_set = stringToRoutes(route_string,s1,n1);
-            rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s1,TimeMatrix, transfer_time);
+            [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s1,TimeMatrix, transfer_time);
             route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n1);
             pop(k).Cost = route_set_cost;
+            A(1,k) = route_set_cost(2,1);
         end
+        fprintf('\nMinimum Operator Cost:'); disp(min(A));
     elseif (sum(metro_line) == 0)
         for k=1:length(pop)
             route_string = [pop(k).Position];
             route_set = stringToRoutes(route_string,s,n);
-            rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+            [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
             route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
-            pop(k).Cost = route_set_cost;
+            pop(k).Cost = route_set_cost;       
         end
     end
 
@@ -310,14 +313,16 @@ for iter=1:max_no_of_generations
    
 end
 
-% Pareto Front
+%% Pareto Front
 front_pop = cell(numel(F1),2);
 for g=1:numel(F1)
     front_pop{g,1}=F1(g).Position; %disp(front_pop{g,1});
     front_pop{g,2}=norm_costs(g,:);
 end
 
-% Display Route Sets 
+F1_transfermatrix = zeros(numel(F1),5);
+
+%% Display F1 Route Sets 
 fprintf('\n\nRoute Sets in Pareto-optimal Front: \n'); 
 for g=1:numel(F1)
     fprintf('\nRoute Set no. %d: \n', g); 
@@ -330,7 +335,8 @@ for g=1:numel(F1)
         route_string = [front_pop{g,1}];
         route_set = stringToRoutes(route_string,s,n);
     end
-    rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    F1_transfermatrix(g,:) = ntransfer;
     route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
     front_pop{g,1} = route_string;
     front_pop{g,2} = route_set_cost;
@@ -349,13 +355,34 @@ for g=1:numel(F1)
     pause(0.5);
 end
 
-% Plot F1 Actual Costs
+%% Plot F1 Actual Costs
 figure(3);
 costs = PlotCosts(F1);
 pause(0.01);
 title('F1 Actual Costs');
 
-% Plot Final Population Actual Costs
+%% Plot F1 Transfer Statistics
+figure(6);
+x = linspace(1,numel(F1),numel(F1));
+y1 = ([F1_transfermatrix(:,1)]').*(1/n^2);
+plot(x,y1,'r-*','MarkerSize',10, 'DisplayName', 'Direct trips','LineWidth',2);
+hold on 
+y2 = ([F1_transfermatrix(:,2)]').*(1/n^2);
+plot(x,y2,'y-*','MarkerSize',10, 'DisplayName', '1 Transfer trips','LineWidth',2);
+hold on 
+y3 = ([F1_transfermatrix(:,3)]').*(1/n^2);
+plot(x,y3,'g-*','MarkerSize',10, 'DisplayName', '2 Transfer trips','LineWidth',2);
+hold on 
+y4 = ([F1_transfermatrix(:,4)]').*(1/n^2);
+plot(x,y4,'c-*','MarkerSize',10, 'DisplayName', '3 Transfer trips','LineWidth',2);
+hold off
+
+xlabel('Non-dominated Solutions');
+ylabel('Percentage of Transfers');
+title('Percentage of Transfers of Non-Dominated Solutions');
+legend;
+
+%% Plot Final Population Actual Costs
 all_pop = cell(numel(pop),2);
 for g=1:numel(pop)
     all_pop{g,1}=pop(g).Position; %disp(front_pop{g,1});
@@ -370,7 +397,7 @@ for g=1:length(pop)
         route_string = [all_pop{g,1}];
         route_set = stringToRoutes(route_string,s,n);
     end
-    rsm_TimeMatrix = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
     route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
     all_pop{g,1} = route_string;
     all_pop{g,2} = route_set_cost;
