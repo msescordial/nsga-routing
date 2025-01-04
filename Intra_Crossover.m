@@ -51,10 +51,10 @@ function [new_route_set_string]=Intra_Crossover(route_set_string,s,n)
         % 2. Then Choosing of demarcation site randomly 
         % Demarcation site is at the end of the common node 
         % Only one demarcation site (for now)
-        route1 = BusRoute(chosen_routes(1,:));
-        route2 = BusRoute(chosen_routes(2,:));
+        route1 = functionRoute(chosen_routes(1,:));
+        route2 = functionRoute(chosen_routes(2,:));
                 
-        [b, h] = common_nodes(route1, route2);
+        [b, h] = getCommonNodes(route1, route2);
         if (b == 1)
             [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n);   
             if (newroute1 == 0)

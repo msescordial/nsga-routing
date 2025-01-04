@@ -88,7 +88,7 @@ function new_node = mutation_operator(node, DistanceMatrix, vec, n)
         vici = vicinity_nodes(b);    
         f3 = 1;      
         k_paths = 5;
-        [shortestPaths, totalCosts] = kSP(DistanceMatrix, vici, aft, k_paths);
+        [shortestPaths, totalCosts] = kShortestPath_Dijkstra(DistanceMatrix, vici, aft, k_paths);
         for h=1:k_paths
             path = shortestPaths{1,h}; len_path = length(path);
             %disp("path"); disp(path);

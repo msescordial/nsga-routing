@@ -46,7 +46,7 @@ function [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n)
         %disp("newroute2"); disp(newroute2); 
         
         % are there two same nodes in each new route?
-        A1 = BusRoute(newroute1); A2 = BusRoute(newroute2);
+        A1 = functionRoute(newroute1); A2 = functionRoute(newroute2);
         A3 = sort(A1); A4 = sort(A2);      
         %disp("A3"); disp(A3); disp("A4"); disp(A4);
         
