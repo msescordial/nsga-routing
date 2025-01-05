@@ -253,7 +253,6 @@ while iter <= max_no_of_generations
             route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n1);
             pop(k).Cost = route_set_cost;
         end
-        fprintf('\nMinimum Operator Cost:'); disp(min(A));
     elseif (sum(metro_line) == 0)       % network = mandl OR india
         for k=1:length(pop)
             route_string = [pop(k).Position];
