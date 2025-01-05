@@ -16,11 +16,11 @@ function [front_pop] = NSGA_2(min_route_length, max_route_length, network_name, 
     TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro)
 
 %% ----- Parameters -----
-max_no_of_generations = 100;       % maximum no. of generations (200)
-population_size = 100;             % (100)
+max_no_of_generations = 2;       
+population_size = 20;             
 P_ce = 0.5;             % inter-crossover probability
 P_ca = 0.5;             % intra-crossover probability
-P_m = 0.05;              % mutation probability
+P_m = 0.05;             % mutation probability
 
 %% ----- INITIALIZATION -----
 % GENERATE CANDIDATE ROUTES
@@ -66,7 +66,7 @@ while (g <= population_size)
     end
     
     fprintf('generating route set time matrix...');
-    [rs_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    [rs_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
     route_set_Cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rs_TimeMatrix,n);
     % Make sure that the two Objective Function Values have no Inf value
     if (ismember(inf,route_set_Cost) == 1 || ismember(NaN,route_set_Cost) == 1)
@@ -101,13 +101,6 @@ for g=1:population_size
     pop(g).Cost=initial_pop_matrix{g,3};
 end
 
-% Plot ObjFuncValues of Initial Population
-%figure(1);
-%norm_costs = PlotCosts(pop);
-%title('Initial Population');
-%pause(0.01);
-
-
 % Non-Dominated Sorting
 [pop, F]=NonDominatedSorting(pop);  %disp("Non-Dominated Sorting"); disp("pop"); disp(F);
 % Calculate Crowding Distance
@@ -116,8 +109,10 @@ pop=CalcCrowdingDistance(pop,F);    %disp("Calculate Crowding Distance"); disp("
 [pop, F]=SortPopulation(pop);       %disp("Sort Population"); disp("pop"); disp(F);
 %disp("pop"); disp(pop);
 
+
 %% --- NSGA-II MAIN LOOP ---
-for iter=1:max_no_of_generations
+iter = 1;
+while iter <= max_no_of_generations
     fprintf('\nGeneration %d\n',iter);
 
     % CROSSOVER
@@ -149,9 +144,9 @@ for iter=1:max_no_of_generations
             continue
         end
 
-        [rsce1_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set_1,s,TimeMatrix, transfer_time);
+        [rsce1_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set_1,s,TimeMatrix, transfer_time);
         route_set_1_cost = getObjectiveFunctionValue(route_set_1,TravelDemandMatrix,DistanceMatrix,rsce1_TimeMatrix,n);
-        [rsce2_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set_2,s,TimeMatrix, transfer_time);
+        [rsce2_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set_2,s,TimeMatrix, transfer_time);
         route_set_2_cost = getObjectiveFunctionValue(route_set_2,TravelDemandMatrix,DistanceMatrix,rsce2_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_1_cost) == 1 || ismember(NaN,route_set_1_cost) == 1 || ismember(inf,route_set_2_cost) == 1 || ismember(NaN,route_set_2_cost) == 1)
@@ -191,7 +186,7 @@ for iter=1:max_no_of_generations
         if (connected == 0)
             continue
         end
-        [rsca_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+        [rsca_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsca_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
@@ -226,7 +221,7 @@ for iter=1:max_no_of_generations
         if (connected == 0)
             continue
         end
-        [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+        [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
@@ -249,23 +244,21 @@ for iter=1:max_no_of_generations
     %disp("pop"); disp(pop);
    
     % Recompute Costs
-    if (incorporate_metro == 1)
-        A = zeros(1,length(pop));
+    if (incorporate_metro == 1)         % network = metro_manila
         for k=1:length(pop)
             route_string = [pop(k).Position metro_line];
             s1 = 26; n1 = 149;
             route_set = stringToRoutes(route_string,s1,n1);
-            [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s1,TimeMatrix, transfer_time);
+            [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s1,TimeMatrix, transfer_time);
             route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n1);
             pop(k).Cost = route_set_cost;
-            A(1,k) = route_set_cost(2,1);
         end
         fprintf('\nMinimum Operator Cost:'); disp(min(A));
-    elseif (sum(metro_line) == 0)
+    elseif (sum(metro_line) == 0)       % network = mandl OR india
         for k=1:length(pop)
             route_string = [pop(k).Position];
             route_set = stringToRoutes(route_string,s,n);
-            [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+            [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
             route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
             pop(k).Cost = route_set_cost;       
         end
@@ -273,11 +266,9 @@ for iter=1:max_no_of_generations
 
     % Normalize costs
     Costs=[pop.Cost];
-    %disp("NOT Normalized Costs"); disp(Costs');
     norm_cost_1 = normalize(Costs(1,:));
     norm_cost_2 = normalize(Costs(2,:));
     norm_costs = [norm_cost_1; norm_cost_2]';
-    %disp("Normalized Costs"); disp(norm_costs);
     for k=1:length(pop)
         pop(k).Cost = norm_costs(k,:)';
     end
@@ -311,12 +302,13 @@ for iter=1:max_no_of_generations
     norm_costs = PlotCosts(F1);
     pause(0.01);
    
+    iter = iter + 1;
 end
 
 %% Pareto Front
 front_pop = cell(numel(F1),2);
 for g=1:numel(F1)
-    front_pop{g,1}=F1(g).Position; %disp(front_pop{g,1});
+    front_pop{g,1}=F1(g).Position; 
     front_pop{g,2}=norm_costs(g,:);
 end
 
@@ -335,12 +327,12 @@ for g=1:numel(F1)
         route_string = [front_pop{g,1}];
         route_set = stringToRoutes(route_string,s,n);
     end
-    [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
     F1_transfermatrix(g,:) = ntransfer;
     route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
     front_pop{g,1} = route_string;
     front_pop{g,2} = route_set_cost;
-    F1(g).Cost = route_set_cost;            % actual costs
+    F1(g).Cost = route_set_cost;                % actual costs
     
     Sr=stringToRoutes(front_pop{g,1},s,n);
     for a=1:s
@@ -362,7 +354,7 @@ pause(0.01);
 title('F1 Actual Costs');
 
 %% Plot F1 Transfer Statistics
-figure(6);
+figure(4);
 x = linspace(1,numel(F1),numel(F1));
 y1 = ([F1_transfermatrix(:,1)]').*(1/n^2);
 plot(x,y1,'r-*','MarkerSize',10, 'DisplayName', 'Direct trips','LineWidth',2);
@@ -375,12 +367,19 @@ plot(x,y3,'g-*','MarkerSize',10, 'DisplayName', '2 Transfer trips','LineWidth',2
 hold on 
 y4 = ([F1_transfermatrix(:,4)]').*(1/n^2);
 plot(x,y4,'c-*','MarkerSize',10, 'DisplayName', '3 Transfer trips','LineWidth',2);
+if (network_name == "metro_manila")
+    hold on
+    plot(3.5, 0.1441,'r-*','MarkerSize',10); hold on
+    plot(3.5, 0.4792,'y-*','MarkerSize',10); hold on
+    plot(3.5, 0.3767,'g-*','MarkerSize',10); hold on
+    plot(3.5, 0,'c-*','MarkerSize',10);
+end
 hold off
 
 xlabel('Non-dominated Solutions');
 ylabel('Percentage of Transfers');
 title('Percentage of Transfers of Non-Dominated Solutions');
-legend;
+legend('Direct trips','1 Transfer trips','2 Transfer trips','3 Transfer trips');
 
 %% Plot Final Population Actual Costs
 all_pop = cell(numel(pop),2);
@@ -397,24 +396,17 @@ for g=1:length(pop)
         route_string = [all_pop{g,1}];
         route_set = stringToRoutes(route_string,s,n);
     end
-    [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix0(route_set,s,TimeMatrix, transfer_time);
+    [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
     route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
     all_pop{g,1} = route_string;
     all_pop{g,2} = route_set_cost;
     pop(g).Cost = route_set_cost;   % actual costs
 end
-figure(4);
+figure(5);
 costs = PlotCosts(pop);
 pause(0.01);
 title('Final Population Costs');
 
-% Plot F1 Costs of the Latest Generation of Solutions
-%figure(2);
-%plot(norm_costs(:,1),norm_costs(:,2),'r*','MarkerSize',8);
-%xlabel('1^{st} Objective');
-%ylabel('2^{nd} Objective');
-%title('Non-dominated Solutions (F_{1})');
-%grid on;
 
 end
     
