@@ -16,8 +16,8 @@ function [front_pop] = NSGA_2(min_route_length, max_route_length, network_name, 
     TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro)
 
 %% ----- Parameters -----
-max_no_of_generations = 2;       
-population_size = 20;             
+max_no_of_generations = 100;       
+population_size = 100;             
 P_ce = 0.5;             % inter-crossover probability
 P_ca = 0.5;             % intra-crossover probability
 P_m = 0.05;             % mutation probability
