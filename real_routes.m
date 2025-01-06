@@ -41,7 +41,7 @@ function real_routes(TravelDemandMatrix, DistanceMatrix, TimeMatrix, transfer_ti
     %disp(route_set);
 
     % Plot Route Set
-    fprintf('\nReal Routes');
+    fprintf('\nReal Routes \n');
     figure(6);
     plotRouteSet("metro_manila",route_set,26,149);
     title('Real-world route set');
