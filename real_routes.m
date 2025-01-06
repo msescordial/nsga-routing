@@ -48,7 +48,7 @@ function real_routes(TravelDemandMatrix, DistanceMatrix, TimeMatrix, transfer_ti
     [SolutionTimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
     %disp(SolutionTimeMatrix);
     E0 = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,SolutionTimeMatrix,n);
-    %fprintf('\n Objective 1: %.6f, Objective 2: %.6f \n', E0(1,1), E0(2,1)); disp(ntransfer.*(1/n^2));
+    fprintf('\n\n Real Routes \n Objective 1: %.6f, Objective 2: %.6f \n', E0(1,1), E0(2,1)); %disp(ntransfer.*(1/n^2));
 
 end
 
