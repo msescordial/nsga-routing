@@ -128,7 +128,7 @@ while iter <= max_no_of_generations
 
     k = 1;
     while(k <= nCrossover) 
-        fprintf('\n %d',k);
+        %fprintf('\n %d',k);
         i1=randi([1 population_size]);
         p1=pop(i1);    
         i2=randi([1 population_size]);
@@ -150,7 +150,7 @@ while iter <= max_no_of_generations
         repeatedroutes1 = checkRouteRepetition(route_set_1,s,n);
         repeatedroutes2 = checkRouteRepetition(route_set_2,s,n);
         if (repeatedroutes1 + repeatedroutes2 > 1)
-            disp("Route set has repeated routes.");
+            %disp("Route set has repeated routes.");
             continue
         end
 
@@ -160,7 +160,7 @@ while iter <= max_no_of_generations
         route_set_2_cost = getObjectiveFunctionValue(route_set_2,TravelDemandMatrix,DistanceMatrix,rsce2_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_1_cost) == 1 || ismember(NaN,route_set_1_cost) == 1 || ismember(inf,route_set_2_cost) == 1 || ismember(NaN,route_set_2_cost) == 1)
-            fprintf('\n Route set objective value has Inf');
+            %fprintf('\n Route set objective value has Inf');
             continue
         end
         
@@ -185,7 +185,7 @@ while iter <= max_no_of_generations
     popc=repmat(popc,1,1);   % repeat copies of array
     k = 1;
     while (k <= nCrossover)   
-        fprintf('\n %d',k);
+        %fprintf('\n %d',k);
         i1=randi([1 population_size/2]);
         p1=popc(i1);
         
@@ -201,14 +201,14 @@ while iter <= max_no_of_generations
         % Make sure that the route set has no repeated routes
         repeatedroutes = checkRouteRepetition(route_set,s,n);
         if (repeatedroutes == 1)
-            disp("Route set has repeated routes.");
+            %disp("Route set has repeated routes.");
             continue
         end
         [rsca_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsca_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
-            fprintf('\n Route set objective value has Inf');
+            %fprintf('\n Route set objective value has Inf');
             continue
         end        
 
@@ -228,7 +228,7 @@ while iter <= max_no_of_generations
     popm=repmat(empty_individual,nMutation,1);   % repeat copies of array
     k = 1;
     while (k <= nMutation)   
-        fprintf('\n %d',k);
+        %fprintf('\n %d',k);
         i1=randi([1 population_size/2]);
         p1=popc(i1);
 
@@ -244,14 +244,14 @@ while iter <= max_no_of_generations
         % Make sure that the route set has no repeated routes
         repeatedroutes = checkRouteRepetition(route_set,s,n);
         if (repeatedroutes == 1)
-            disp("Route set has repeated routes.");
+            %disp("Route set has repeated routes.");
             continue
         end
         [rsm_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
         route_set_cost = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,rsm_TimeMatrix,n);
         % Make sure that the two Objective Function Values have no Inf value
         if (ismember(inf,route_set_cost) == 1 || ismember(NaN,route_set_cost) == 1)
-            fprintf('\n Route set objective value has Inf');
+            %fprintf('\n Route set objective value has Inf');
             continue
         end  
 
