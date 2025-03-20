@@ -1,4 +1,4 @@
-function [new_route_set_string]=Intra_Crossover(route_set_string,s,n)
+function [new_route_set_string]=Intra_Crossover(route_set_string,s,n,min_route_length,max_route_length)
    
     new_route_set_string = zeros(1,1);
     routes_parent = zeros(s,n);         % display the routes
@@ -56,7 +56,7 @@ function [new_route_set_string]=Intra_Crossover(route_set_string,s,n)
                 
         [b, h] = getCommonNodes(route1, route2);
         if (b == 1)
-            [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n);   
+            [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n, min_route_length, max_route_length);   
             if (newroute1 == 0)
                 %disp("Get another route pair.");
                 route_pair = 2;
