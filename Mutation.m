@@ -1,14 +1,25 @@
-function new_route_set = Mutation(route_set,s,n,DistanceMatrix)
+function new_route_set = Mutation(route_set,s,n,DistanceMatrix,min_route_length,max_route_length)
 
     new_route_set = zeros(1,s*n);
         
     % choose random node
-    sr = randi([1,s],1);
-    vec = functionRoute(route_set(1,(sr-1)*n+1:sr*n));
-    mp = randi([1,length(vec)],1);
-    node = vec(1,mp);       %disp("Old Node"); disp(node);
-    new_node = mutation_operator(node, DistanceMatrix, vec, n);     %disp("New Node"); disp(new_node);
-    len = length(new_node);     
+    g = 0;
+    while (g == 0)
+        sr = randi([1,s],1);
+        vec = functionRoute(route_set(1,(sr-1)*n+1:sr*n));
+        mp = randi([1,length(vec)],1);
+        node = vec(1,mp);       %disp("Old Node"); disp(node);
+        new_node = mutation_operator(node, DistanceMatrix, vec, n);     %disp("New Node"); disp(new_node);
+        len = length(new_node);     
+
+        len2 = len + length(vec) - 1;
+        if ((len2 < min_route_length) || (len2 > max_route_length))
+            g = 0;
+        else
+            g = 1; 
+        end
+    end
+    
     if (len == 1)
         new_route_set(1,:) = route_set(1,:);          % other nodes stay the same
         new_route_set(1,(sr-1)*n+mp) = new_node;
