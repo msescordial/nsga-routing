@@ -190,7 +190,7 @@ while iter <= max_no_of_generations
         p1=popc(i1);
         
         %crossover
-        [new_route_set]=Intra_Crossover(p1.Position,s,n);      %disp(popc(k).Position)
+        [new_route_set]=Intra_Crossover(p1.Position,s,n,min_route_length,max_route_length);      %disp(popc(k).Position)
         %cost
         route_set = stringToRoutes(new_route_set,s,n); 
         % Make sure that the route set is connected
@@ -233,7 +233,7 @@ while iter <= max_no_of_generations
         p1=popc(i1);
 
         %mutation
-        [new_route_set] = Mutation(p1.Position,s,n,DistanceMatrix);
+        [new_route_set] = Mutation(p1.Position,s,n,DistanceMatrix,min_route_length,max_route_length);
         %cost
         route_set = stringToRoutes(new_route_set,s,n); 
         % Make sure that the route set is connected
