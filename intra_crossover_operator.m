@@ -1,4 +1,4 @@
-function [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n)
+function [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n, min_route_length, max_route_length)
     % choosing randomly 
     k = length(h);
     c = randi([1, k],1);
@@ -45,8 +45,16 @@ function [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n)
         %disp("newroute1"); disp(newroute1);
         %disp("newroute2"); disp(newroute2); 
         
-        % are there two same nodes in each new route?
         A1 = functionRoute(newroute1); A2 = functionRoute(newroute2);
+        if ((length(A1) < min_route_length) || (length(A1) > max_route_length))
+            newroute1 = 0; newroute2 = 0;
+        elseif ((length(A2) < min_route_length) || (length(A2) > max_route_length))
+            newroute1 = 0; newroute2 = 0;
+        end
+        
+        % are there two same nodes in each new route?
+        %A1 = functionRoute(newroute1); A2 = functionRoute(newroute2);
+
         A3 = sort(A1); A4 = sort(A2);      
         %disp("A3"); disp(A3); disp("A4"); disp(A4);
         
