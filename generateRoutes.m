@@ -10,7 +10,7 @@
 %   4. no_of_routes - total no. of routes generated
 % -------------------------------------------------------------------------
 
-function [BusRouteID, AllPaths, AllCosts, no_of_routes] = generateRoutes(netCostMatrix,k,t)
+function [BusRouteID, AllPaths, AllCosts, no_of_routes] = generateRoutes(netCostMatrix,k,t,max_route_length)
     no_of_routes = 0;
     n = size(netCostMatrix,1); 
     AllPaths = zeros(1,n);      % to list all Paths/Routes Generated
@@ -27,14 +27,19 @@ function [BusRouteID, AllPaths, AllCosts, no_of_routes] = generateRoutes(netCost
                 fprintf('generating paths for each pair of terminal nodes...\n')
                 % fprintf('Path # %d:\n',i);  disp(shortestPaths{i});
                 % fprintf('Cost of path %d is %5.2f\n\n',i,totalCosts(i));
-            	no_of_routes = no_of_routes + 1;       
-                b = length(shortestPaths{i});
-                AllPaths(a,1:b)=shortestPaths{i};
-                AllCosts(a,1)=totalCosts(i);
-                a = a+1;
+                if (totalCosts(i) <= max_route_length)                   
+            	    no_of_routes = no_of_routes + 1;       
+                    b = length(shortestPaths{i});
+                    AllPaths(a,1:b)=shortestPaths{i};
+                    AllCosts(a,1)=totalCosts(i);
+                    a = a+1;
+                end
             end   
         end  
     end
+
+    % selecting only applicable routes based on route length
+
     
     no_of_routes = a-1;
     

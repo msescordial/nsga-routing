@@ -5,27 +5,30 @@ function new_route_set = Mutation(route_set,s,n,DistanceMatrix,min_route_length,
     % choose random node
     g = 0;
     while (g == 0)
-        sr = randi([1,s],1);
-        vec = functionRoute(route_set(1,(sr-1)*n+1:sr*n));
-        mp = randi([1,length(vec)],1);
-        node = vec(1,mp);       %disp("Old Node"); disp(node);
+        selected_route = randi([1,s],1);
+        vec = functionRoute(route_set(1,(selected_route-1)*n+1:selected_route*n));
+        mutation_point = randi([1,length(vec)],1);
+        node = vec(1,mutation_point);       %disp("Old Node"); disp(node);
         new_node = mutation_operator(node, DistanceMatrix, vec, n);     %disp("New Node"); disp(new_node);
         len = length(new_node);     
 
-        len2 = len + length(vec) - 1;
-        if ((len2 < min_route_length) || (len2 > max_route_length))
+        if (len == 1)
+            new_route_set(1,:) = route_set(1,:);          % other nodes stay the same
+            new_route_set(1,(selected_route-1)*n+mutation_point) = new_node;
+        
+        elseif (len > 1)
+            new_route_set(1,:) = route_set(1,:);
+            new_route_set(1,(selected_route-1)*n+mutation_point:(selected_route-1)*n+mutation_point+len-1) = new_node;
+        end
+
+            new_route = new_route_set(1,(selected_route-1)*n+1:selected_route*n);
+            route_length = getRouteLength(functionRoute(new_route),DistanceMatrix);
+
+        if ((route_length < min_route_length) || (route_length > max_route_length))
             g = 0;
         else
             g = 1; 
         end
-    end
-    
-    if (len == 1)
-        new_route_set(1,:) = route_set(1,:);          % other nodes stay the same
-        new_route_set(1,(sr-1)*n+mp) = new_node;
-    elseif (len > 1)
-        new_route_set(1,:) = route_set(1,:);
-        new_route_set(1,(sr-1)*n+mp:(sr-1)*n+mp+len-1) = new_node;
     end
     %displayRouteSet(route_set,s,n);
     %disp("After Mutation:"); displayRouteSet(new_route_set,s,n);

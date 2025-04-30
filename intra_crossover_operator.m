@@ -1,26 +1,16 @@
-function [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n, min_route_length, max_route_length)
+function [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n, min_route_length, max_route_length, DistanceMatrix)
     % choosing randomly 
     k = length(h);
     c = randi([1, k],1);
-    for i=1:k
-        if (c == i)
-            demarc_node = h(i);
-        end
-    end
+
+    demarc_node = h(c);
     %disp("Demarcation Node"); disp(demarc_node);
     
     m1 = length(route1); m2 = length(route2);
     % getting the position of demarc_node
-    for i = 1:m1
-        if (route1(i) == demarc_node)
-            pos_1 = i;
-        end
-    end
-    for j = 1:m2
-        if (route2(j) == demarc_node)
-            pos_2 = j;
-        end
-    end
+
+    pos_1 = find(route1 == demarc_node, 1);
+    pos_2 = find(route2 == demarc_node, 1);
       
     if ( pos_1 == m1 || pos_2 == m2)
         newroute1 = 0; newroute2 = 0;
@@ -44,32 +34,25 @@ function [newroute1, newroute2] = intra_crossover_operator(route1, route2, h, n,
  
         %disp("newroute1"); disp(newroute1);
         %disp("newroute2"); disp(newroute2); 
+
+        A1 = getRouteLength(functionRoute(newroute1),DistanceMatrix); 
+        A2 = getRouteLength(functionRoute(newroute2),DistanceMatrix);
         
-        A1 = functionRoute(newroute1); A2 = functionRoute(newroute2);
-        if ((length(A1) < min_route_length) || (length(A1) > max_route_length))
+        if ((A1 < min_route_length) || (A1 > max_route_length))
             newroute1 = 0; newroute2 = 0;
-        elseif ((length(A2) < min_route_length) || (length(A2) > max_route_length))
+        elseif ((A2 < min_route_length) || (A2 > max_route_length))
             newroute1 = 0; newroute2 = 0;
         end
         
         % are there two same nodes in each new route?
-        %A1 = functionRoute(newroute1); A2 = functionRoute(newroute2);
-
-        A3 = sort(A1); A4 = sort(A2);      
-        %disp("A3"); disp(A3); disp("A4"); disp(A4);
-        
-        for a5 = 1:length(A3)-1
-            if (A3(1,a5) == A3(1,a5+1))
-                %disp("There is a repeat node in the same route");
-                newroute1 = 0; newroute2 = 0;
-            end
+        A3 = functionRoute(newroute1); A4 = functionRoute(newroute2);
+        rep3 = length(A3)-length(unique(A3));
+        rep4 = length(A4)-length(unique(A4));
+        repsum = rep3 + rep4;
+        if (repsum ~= 0)
+            newroute1 = 0; newroute2 = 0;
+            %fprintf("Meow! There are same nodes in a route");
         end
-        for a6 = 1: length(A4)-1
-            if (A4(1,a6) == A4(1,a6+1))
-                %disp("There is a repeat node in the same route");
-                newroute1 = 0; newroute2 = 0;
-            end
-        end  
         
     end
 end

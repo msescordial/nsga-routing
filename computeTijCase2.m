@@ -4,19 +4,8 @@
 function [tij]=computeTijCase2(i,j, routei, routej, transfer_time, TimeMatrix) 
     
     % Initialization
-    tij = Inf; 
     
-    v = 1;
-    h = zeros(1,1);     % vector of common nodes of routei and routej
-    
-    for p = 1:length(routei)
-        for q = 1:length(routej)
-            if (routei(p) == routej(q))
-                h(1,v) = routei(1,p);     % common node 
-                v = v+1;
-            end
-        end
-    end
+    h = intersect(routei, routej);
     
     k = length(h);    
     %disp("h"); disp(h);

@@ -37,6 +37,15 @@ function real_routes(TravelDemandMatrix, DistanceMatrix, TimeMatrix, transfer_ti
     %    
     %end
 
+    for j=1:26
+        dist = 0;
+        route = nonzeros(S0r{j,1})'; %disp(route);
+        for i=1:length(route)-1
+            dist = dist + DistanceMatrix(route(1,i),route(1,i+1));
+        end
+        %fprintf('\n Route %d: %.2f',j,dist); 
+    end
+
     route_set = S0r;
     %disp(route_set);
 
@@ -46,6 +55,7 @@ function real_routes(TravelDemandMatrix, DistanceMatrix, TimeMatrix, transfer_ti
     title('Real-world route set');
 
     [SolutionTimeMatrix, ntransfer] = getRouteSetTimeMatrix(route_set,s,TimeMatrix, transfer_time);
+    disp(ntransfer);
     %disp(SolutionTimeMatrix);
     E0 = getObjectiveFunctionValue(route_set,TravelDemandMatrix,DistanceMatrix,SolutionTimeMatrix,n);
     fprintf('\n Objective 1: %.6f, Objective 2: %.6f \n', E0(1,1), E0(2,1)); %disp(ntransfer.*(1/n^2));

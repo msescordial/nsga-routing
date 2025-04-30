@@ -1,31 +1,7 @@
 function [tij]=computeTijCase3(i,j,routei, routef, routej, transfer_time, TimeMatrix)
 
-    % Initialization
-    tij = Inf; 
-    
-    v1 = 1;
-    h1 = zeros(1,1);     % vector of common nodes of routei and routef
-    
-    v2 = 1;
-    h2 = zeros(1,1);     % vector of common nodes of routef and routej
-    
-    for p1 = 1:length(routei)
-        for q1 = 1:length(routef)
-            if (routei(p1) == routef(q1))
-                h1(1,v1) = routei(1,p1);     % common node 
-                v1 = v1+1;
-            end
-        end
-    end
-    
-    for p2 = 1:length(routef)
-        for q2 = 1:length(routej)
-            if (routef(p2) == routej(q2))
-                h2(1,v2) = routef(1,p2);     % common node 
-                v2 = v2+1;
-            end
-        end
-    end
+    h1 = intersect(routei, routef);
+    h2 = intersect(routef, routej);
    
     k1 = length(h1);  
     k2 = length(h2); 
@@ -41,15 +17,10 @@ function [tij]=computeTijCase3(i,j,routei, routef, routej, transfer_time, TimeMa
 
     
     % 1st and 2nd row of M:
-    w = 1;
     for u = 1:k1
-        for v = w:k2+w-1
-            M(1,v)=h1(u);
-        end
-        for y = 1:k2       
-            M(2,y+w-1)=h2(y);
-        end
-        w = w + k2;
+        idx = (u-1)*k2 + (1:k2);   % block of columns for current u
+        M(1, idx) = h1(u);         
+        M(2, idx) = h2;            
     end
       
     % 3rd row of M  

@@ -14,6 +14,7 @@ function [new_route_set_1_string, new_route_set_2_string]=Inter_Crossover(route_
 
     % checking if all nodes are in the new route sets
     feasible = checkFeasibility(new_route_set_1_string,s,n); 
+    %disp("feasible"); disp(feasible);
     if (feasible == 0)         % Infeasible
         infeasible_solution = new_route_set_1_string;       %disp("Infeasible Solution"); displayRouteSet(infeasible_solution,s,n); 
         feas1 = repair_infeasible_route_set(infeasible_solution, s, n, DistanceMatrix);
@@ -24,6 +25,7 @@ function [new_route_set_1_string, new_route_set_2_string]=Inter_Crossover(route_
             new_route_set_1_string = feas1;     %disp("Feasible Solution"); displayRouteSet(feas1,s,n);
         end
     end
+
 
     feasible = checkFeasibility(new_route_set_2_string,s,n); 
     if (feasible == 0)         % Infeasible

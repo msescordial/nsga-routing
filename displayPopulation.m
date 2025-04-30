@@ -4,20 +4,19 @@
 % -------------------------------------------------------------------------
 
 function displayPopulation(M,n)
-    [r c] = size(M);
-    s = c/n;    % no. of routes     
-    for i=1:r
-        %divide into routes
-        k = 1;
-        for j=1:s
-            draft_route = M(i,k:k+n-1);
+    [r, c] = size(M);
+    s = c / n;  % number of routes
+
+    for i = 1:r
+        for j = 1:s
+            % Divide into routes
+            k = (j-1) * n + 1;
+            draft_route = M(i, k:k+n-1);
             C = nonzeros(draft_route)';
-            for q=1:length(C)-1
-                fprintf('%d-',C(1,q));
-            end
-            fprintf('%d |', C(1,length(C)));
-            k = k + n;
+            fprintf('%d-', C(1:end-1));  
+            fprintf('%d |', C(end));     
         end
         fprintf('\n');
-    end  
+    end
+
 end

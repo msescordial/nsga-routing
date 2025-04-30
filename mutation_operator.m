@@ -1,114 +1,76 @@
 function new_node = mutation_operator(node, DistanceMatrix, vec, n)
-    check = zeros(1,length(vec));
-    for p1=1:n
-        check(1,p1) = p1;
-    end
-    A = ones(1,n)-ismember(check,vec);
-    B = zeros(1,sum(A));
-    p3 = 1;
-    for p2=1:n
-        if (A(1,p2) == 1)
-            B(1,p3) = check(1,p2);
-            p3 = p3 + 1;
-        end
-    end
-    %disp(check); disp(A); disp(B);
 
-    % get the nodes before and after from the vector
-    for j=1:length(vec)
-        if (vec(j) == node)
-            pos = j;
-        end
+    B = setdiff(1:n, vec);  % nodes not in current path
+
+    pos = find(vec == node, 1);
+
+    if isempty(pos)
+        new_node = node;
+        return;
     end
 
-    if (pos == 1)
-        aft = vec(1,2);
-        v1 = 1; V1 = zeros(1,v1);
-        for q1=1:length(B)
-            if (DistanceMatrix(B(q1),aft) ~= Inf && DistanceMatrix(B(q1),aft) ~= 0)
-                V1(1,v1) = B(q1);
-                v1 = v1 + 1;
-            end
+    if pos == 1
+        aft = vec(2);
+        valid_nodes = B(DistanceMatrix(B, aft) ~= Inf & DistanceMatrix(B, aft) ~= 0);
+
+        if isempty(valid_nodes)
+            new_node = node;
+        else
+            new_node = selectClosest(valid_nodes, aft, DistanceMatrix);
         end
-        w1 = randi([1, length(V1)],1);
-        new_node = V1(w1);
-    elseif (pos == length(vec))
-        bef = vec(1,length(vec)-1);
-        v2 = 1; V2 = zeros(1,v2);
-        for q2=1:length(B)
-            if (DistanceMatrix(B(q2),bef) ~= Inf && DistanceMatrix(B(q2),bef) ~= 0)
-                V2(1,v2) = B(q2);
-                v2 = v2 + 1;
-            end
+
+    elseif pos == length(vec)
+        bef = vec(end-1);
+        valid_nodes = B(DistanceMatrix(B, bef) ~= Inf & DistanceMatrix(B, bef) ~= 0);
+
+        if isempty(valid_nodes)
+            new_node = node;
+        else
+            new_node = selectClosest(valid_nodes, bef, DistanceMatrix);
         end
-        w2 = randi([1, length(V2)],1);
-        new_node = V2(w2); 
+
     else
-        bef = vec(1,pos-1);
-        aft = vec(1,pos+1);
+        bef = vec(pos-1);
+        aft = vec(pos+1);
 
-        % checking the vicinity nodes
-        f1 = 1;
-        vicinity_nodes = zeros(1,f1);
-        for q3=1:length(B)
-            if (DistanceMatrix(bef,B(q3)) ~= Inf && DistanceMatrix(bef,B(q3)) ~= 0)
-                vicinity_nodes(1,f1) = B(q3);
-                f1 = f1 + 1;
-            end
-        end
-        %disp("Vicinity Nodes"); disp(vicinity_nodes);
+        vicinity_nodes = B(DistanceMatrix(bef, B) ~= Inf & DistanceMatrix(bef, B) ~= 0);
 
-        if (vicinity_nodes == 0)
+        if isempty(vicinity_nodes)
             new_node = node;
             return;
         end
 
-        len = length(vicinity_nodes);
-    
-        f2 = 1;
-        candidates = zeros(1,f2);
+        candidates = vicinity_nodes(DistanceMatrix(vicinity_nodes, aft) ~= Inf & DistanceMatrix(vicinity_nodes, aft) ~= 0);
 
-        % Check if a single link exists
-        for k=1:len
-            if (DistanceMatrix(vicinity_nodes(1,k),aft) ~= Inf && DistanceMatrix(vicinity_nodes(1,k),aft) ~= 0)
-                candidates(1,f2) = vicinity_nodes(1,k);
-                f2 = f2 + 1;
-            end
-        end
-        if (candidates ~= 0)
-            r = randi([1, length(candidates)],1);
-            new_node = candidates(r);
+        if ~isempty(candidates)
+            new_node = selectClosest(candidates, aft, DistanceMatrix);
             return;
         end
-        %disp("Candidates:"); disp(candidates);
 
-        % If no single link,
-        b = randi([1, len], 1);
-        %disp("b"); disp(b);
-        vici = vicinity_nodes(b);    
-        f3 = 1;      
+        vici = vicinity_nodes(randi(length(vicinity_nodes)));
         k_paths = 5;
-        [shortestPaths, totalCosts] = kShortestPath_Dijkstra(DistanceMatrix, vici, aft, k_paths);
-        for h=1:k_paths
-            path = shortestPaths{1,h}; len_path = length(path);
-            %disp("path"); disp(path);
-            n_node = path(1,1:len_path-1); 
-            D = ismember(n_node,vec);
-            if (sum(D) == 0)
-                new_node = n_node;
-                return;
-            else 
-                new_node = node;
+        [shortestPaths, totalCosts] = kSP(DistanceMatrix, vici, aft, k_paths);
+
+        for h = 1:k_paths
+            path = shortestPaths{h};
+            if isempty(path)
+                continue;
+            end
+            intermediate_nodes = path(1:end-1);
+            if all(~ismember(intermediate_nodes, vec))
+                new_node = intermediate_nodes(1);
                 return;
             end
         end
-    end
-    
-    if (new_node == 0)
+
         new_node = node;
     end
 
-    %disp("Old Node"); disp(node);
-    %disp("New Node"); disp(new_node);
 end
 
+function chosen = selectClosest(candidates, target, DistanceMatrix)
+    % Pick the closest node among candidates
+    dists = DistanceMatrix(candidates, target);
+    [~, idx] = min(dists);  % find minimum distance
+    chosen = candidates(idx);
+end

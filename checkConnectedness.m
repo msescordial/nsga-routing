@@ -8,12 +8,9 @@
 % -------------------------------------------------------------------------
 
 function connected = checkConnectedness(route_set,s,n)
-    
+
     % Listing the routes in Matrix Form
-    B = zeros(s,n);
-    for t=1:s
-        B(t,:) = route_set{t,1};        % all s bus routes
-    end
+    B = cell2mat(route_set(:,1));
 
     % Defining a graph G
     edge_start = []; edge_end = [];
@@ -26,13 +23,11 @@ function connected = checkConnectedness(route_set,s,n)
     end
 
     G = graph(edge_start, edge_end);
+    
+    % Find connected components
+    bins = conncomp(G);
 
-    bins = conncomp(G); 
-
-    if (sum(bins) == n)
-        connected = 1;
-    else
-        connected = 0;
-    end
+    % Check connectivity
+    connected = double(sum(bins) == n);
 
 end

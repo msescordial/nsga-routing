@@ -9,12 +9,9 @@ function [feasible_route2] = correct_infeasible_route_case2(missing_node, neighb
     s1 = route(1,1:p-1);
     s2 = route(1,p+1:len);
 
-    reversed_s2 = zeros(1,len-p);
     appended_s1 = zeros(1,p-1);
 
-    for i=1:len-p
-        reversed_s2(1,i) = route(1,len+1-i);
-    end
+    reversed_s2 = route(len:-1:p+1);
     %disp("S2 and its reverse"); disp(s2); disp(reversed_s2);
     
     neighbor_node = route(1,len);

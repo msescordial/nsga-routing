@@ -142,10 +142,11 @@ if (network_name == "metro_manila")
     % T
     load("final_time.mat","-mat");
     TimeMatrix = array;
+    %disp(array);
     for i=1:size
     for j=1:size
         if abs(i-j)>0
-        if TimeMatrix(i,j) == 0
+        if (TimeMatrix(i,j) == 0)
             TimeMatrix(i,j) = inf;
         end
         end
@@ -227,21 +228,33 @@ if (network_name == "metro_manila")
     end
 
     % Plot Route Network Graph
+    figure();
+    
     weight = edge_weight_time;
     P = graph(edge_start, edge_end, weight);
     
     g = plot(P,'XData',x,'YData',y,'NodeFontWeight','bold', 'Marker','o', ...
-        'MarkerSize',4,'LineWidth',0.5);
+        'MarkerSize',2,'LineWidth',0.5);
     %'EdgeLabel',P.Edges.Weight
 
     TerminalNodes = [2, 4, 7, 34, 39, 94, 113, 106, 95, 5, 100, 58, 66, 83, 103, 119, 121, 126, 43, 47, 72, 51, 8, 9, 17, 19, 21, 55, 114, 107, 143, 123, 29, 14, 44];
     highlight(g, TerminalNodes, 'NodeColor', 'g');
 
-    for a=1:s
+
+    for a=1:25
         path = functionRoute(routes{a,1});
-        highlight(g,path,'EdgeColor',hsv2rgb([a/s, 1, 1]),'LineWidth',2);
+        highlight(g,path,'EdgeColor',hsv2rgb([a/25, 1, 1]),'LineWidth',2);
         hold on
     end
+    path = functionRoute(routes{26,1});
+    highlight(g,path,'EdgeColor',hsv2rgb([a/25, 1, 1]),'LineWidth',2);
+
+    %for b=22:25
+    %    path = functionRoute(routes{b,1});
+    %    highlight(g,path,'EdgeColor',hsv2rgb([(b-22)/4, 1, 1]),'LineWidth',2);
+    %    hold on
+    %end
+
     title('A Pareto-optimal Route Set');
     hold off
 end

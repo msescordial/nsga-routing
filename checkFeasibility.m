@@ -9,22 +9,29 @@
 
 function bin = checkFeasibility(solution_vector,s,n)
 
-        % checking if all nodes are in the solution vector
-        nodes = ones(1,n);
-        for a=1:s*n
-        for b=1:n
-            if (solution_vector(1,a) ~= 0)
-            if (solution_vector(1,a) == b)
-                nodes(1,b) = 0;
-            end
-            end
-        end
-        end
+    %% All nodes must be in the route set
 
-        if (sum(nodes) ~= 0)
-            bin = 0;
-        else
-            bin = 1;
-        end
+    % Check for missing nodes
+    missing = setdiff(1:n, nonzeros(solution_vector));
+    bin1 = isempty(missing);
+
+    %% Check for duplicate nodes in each route
+    % convert string to routes
+    route_set = stringToRoutes(solution_vector,s,n);
+        
+    repsum = 0;
+    for c=1:s
+        route = nonzeros(route_set{c,1})';
+        rep = length(route)-length(unique(route));
+        repsum = repsum + rep;
+    end
+
+    bin2 = repsum == 0;
+
+%    if ~bin2
+%        disp("There are same nodes in a route!");
+%    end
+
+    bin = bin1 && bin2;
 
 end

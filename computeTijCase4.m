@@ -1,43 +1,9 @@
 function [tij]=computeTijCase4(i,j,routei, routef1, routef2, routej, transfer_time, TimeMatrix)
 
     % Initialization
-    tij = Inf; 
-    
-    v1 = 1;
-    h1 = zeros(1,1);     % vector of common nodes of routei and routef1
-
-    v2 = 1;
-    h2 = zeros(1,1);     % vector of common nodes of routef1 and routef2
-    
-    v3 = 1;
-    h3 = zeros(1,1);     % vector of common nodes of routef2 and routej
-    
-    for p1 = 1:length(routei)
-        for q1 = 1:length(routef1)
-            if (routei(p1) == routef1(q1))
-                h1(1,v1) = routei(1,p1);     % common node 
-                v1 = v1+1;
-            end
-        end
-    end
-    
-    for p2 = 1:length(routef1)
-        for q2 = 1:length(routef2)
-            if (routef1(p2) == routef2(q2))
-                h2(1,v2) = routef1(1,p2);     % common node 
-                v2 = v2+1;
-            end
-        end
-    end
-
-    for p3 = 1:length(routef2)
-        for q3 = 1:length(routej)
-            if (routef2(p3) == routej(q3))
-                h3(1,v3) = routef2(1,p3);     % common node 
-                v3 = v3+1;
-            end
-        end
-    end
+    h1 = intersect(routei, routef1);
+    h2 = intersect(routef1, routef2);
+    h3 = intersect(routef2, routej);
 
     k1 = length(h1);  
     k2 = length(h2); 

@@ -15,8 +15,8 @@ function costs = PlotCosts(pop)
 
     Costs=[pop.Cost];
     %disp(Costs);
-    cost_1 = Costs(1,:);    % normalize(Costs(1,:));
-    cost_2 = Costs(2,:);    % normalize(Costs(2,:));
+    cost_1 = normalize(Costs(1,:));    % normalize(Costs(1,:));
+    cost_2 = normalize(Costs(2,:));    % normalize(Costs(2,:));
     costs = [cost_1; cost_2]';
 
     plot(cost_1,cost_2,'m.','MarkerSize',15);

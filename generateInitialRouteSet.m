@@ -16,9 +16,9 @@
 %  2. S0r - cell array of route set
 % -------------------------------------------------------------------------
 
-function [S0,S0r] = generateInitialRouteSet(netCostMatrix, BusRouteID, TotalNoOfRoutes, s, min_route_length, max_route_length)
+function [S0,S0r] = generateInitialRouteSet(DistanceMatrix, BusRouteID, TotalNoOfRoutes, s, min_route_length, max_route_length)
         
-    n = size(netCostMatrix,1);
+    n = size(DistanceMatrix,1);
     stop = 0;
 
     %% Start of Main Loop    
@@ -70,7 +70,7 @@ function [S0,S0r] = generateInitialRouteSet(netCostMatrix, BusRouteID, TotalNoOf
             end
 
             %% route length constraint
-            fr = length(nonzeros(final_route));
+            fr = getRouteLength(nonzeros(final_route)',DistanceMatrix);
             if ((fr >= min_route_length) && (fr <= max_route_length))  
                 S0(a,1) = r;                % S0 is composed of these s bus route IDs
                 S0r{a,1} = final_route;     % S0r is composed of these s bus routes
@@ -89,6 +89,7 @@ function [S0,S0r] = generateInitialRouteSet(netCostMatrix, BusRouteID, TotalNoOf
             B(i,:) = S0r{i,1};        % all bus routes
         end
         c = ismember(D,B);
+        %disp("Meow"); disp(n-sum(c));
         if ((n-sum(c)) == 0)
             %disp("Routes:"); disp(S0r); %displayInitialRouteSet(S0,BusRouteID);
             fprintf('\ngenerating possible route set...');

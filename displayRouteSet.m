@@ -7,13 +7,11 @@
 function displayRouteSet(solution_vector,s,n)
     %divide into routes
     k = 1;
-    for j=1:s
-        draft_route = solution_vector(1,k:k+n-1);
+    for j = 1:s
+        draft_route = solution_vector(1, k:k+n-1);
         C = nonzeros(draft_route)';
-        for q=1:length(C)-1
-            fprintf('%d-',C(1,q));
-        end
-        fprintf('%d |', C(1,length(C)));
+        fprintf('%d-', C(1:end-1));  % Print all but the last element with '-'
+        fprintf('%d |', C(end));     % Print the last element
         k = k + n;
     end
     fprintf('\n');
