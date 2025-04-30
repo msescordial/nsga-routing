@@ -6,7 +6,7 @@ function [feasible_solution] = repair_infeasible_route_set(infeasible_solution, 
     [Sc] = stringToRoutes(infeasible_solution, s, n);
     route1 = cell(s, 1);
     for a = 1:s
-        route1{a, 1} = BusRoute(Sc{a, :});
+        route1{a, 1} = functionRoute(Sc{a, :});
     end
 
     % Determine the missing nodes
