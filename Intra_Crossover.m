@@ -8,7 +8,7 @@ function [new_route_set_string]=Intra_Crossover(route_set_string,s,n,min_route_l
                 
     % Choose 2 routes randomly
     route_pair = 2;
-    iter = 1; maxiter = 5;
+    iter = 1; maxiter = 20;
     
     %fprintf("\n iter "); 
     while (route_pair == 2)
