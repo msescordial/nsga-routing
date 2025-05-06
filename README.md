@@ -1,1 +1,1 @@
-
+An implementation of NSGA-II in MATLAB by Mostapha Kalami Heris (\url{https://yarpiz.com/56/ypea120-nsga2}) was adopted and modified to adapt to the bus routing problem. For the $k$-shortest path method and Dijkstra's algorithm, the codes from Wang (\url{https://www.mathworks.com/matlabcentral/fileexchange/5550-dijkstra-shortest-path-routing}).
