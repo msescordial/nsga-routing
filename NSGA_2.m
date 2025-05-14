@@ -30,6 +30,8 @@ P_m = 0.01;             % mutation probability
 %% ----- INITIALIZATION -----
 % GENERATE CANDIDATE ROUTES
 tic
+
+% UNCOMMENT the next two lines
 %[BusRouteID, AllPaths, AllCosts, TotalNoOfRoutes] = generateRoutes(DistanceMatrix,k_ksP,TerminalNodes,max_route_length);
 %save('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes','-mat')
 load('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes');
@@ -48,6 +50,7 @@ pop=repmat(empty_individual,population_size,1);
 
 %% GENERATE INITIAL POPULATION
 
+% UNCOMMENT the next four lines
 %initial_pop_matrix = generateInitialPopulation(population_size, BusRouteID, TotalNoOfRoutes, ...
 %    min_route_length, max_route_length, network_name, DistanceMatrix, TimeMatrix, TravelDemandMatrix, ...
 %    TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro);
