@@ -5,7 +5,7 @@
 %  4. n - no. of nodes
 % -------------------------------------------------------------------------
 
-function plotRouteSet(network_name,routes,s,n)
+function plotRouteSet(network_name,routes,s,n,iter)
 
 
 %% Network: Mandl
@@ -256,6 +256,9 @@ if (network_name == "metro_manila")
     %end
 
     title('A Pareto-optimal Route Set');
+    disp(iter);
+    filename = ['F1routes ' num2str(iter) '.fig'];
+    savefig(gcf,filename);
     hold off
 end
 

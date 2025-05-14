@@ -11,10 +11,10 @@
 % Contact Info: sm.kalami@gmail.com, info@yarpiz.com
 %
 
-function [costs,Fmin,Fmax,Fmed] = PlotActualCosts(pop)
+function [costs,Fmin,Fmax,Fmed] = PlotActualCosts(pop,iter,gen_set)
 
     Costs=[pop.ActualCost];
-    %disp(Costs);
+
     cost_1 = Costs(1,:);   
     cost_2 = Costs(2,:);   
     costs = [cost_1; cost_2]';
@@ -34,6 +34,15 @@ function [costs,Fmin,Fmax,Fmed] = PlotActualCosts(pop)
     xlabel('Passenger Objective');
     ylabel('Operator Objective');
     title('Non-dominated Solutions (F_{1})');
+    
     grid on;
+
+    if (ismember(iter,gen_set))  
+        % save F1 plots
+        filename = ['F1plotgen ' num2str(iter) '.fig'];
+        savefig(gcf,filename);
+        filename2 = ['F1plotgen ' num2str(iter) '.png'];
+        saveas(gcf,filename2);
+    end
 
 end

@@ -6,7 +6,7 @@ function forSensitivityAnalysis(s1, n, metro_line, FM, network_name, iter)
         br = functionRoute(Sr{a,1});
         displayRoute(br);
     end
-    plotRouteSet(network_name,Sr,s1,n);
+    plotRouteSet(network_name,Sr,s1,n,iter);
     title(['Generation ' num2str(iter)]); 
     pause(0.5);
 end

@@ -103,6 +103,26 @@ H = graph(edge_start, edge_end, edge_weight);
 
 % Plot Route Network Graph
 figure(2);
-plot(H,'EdgeLabel',H.Edges.Weight,'XData',x,'YData',y,...
+h = plot(H,'XData',x,'YData',y,...
     'NodeFontWeight','bold', 'Marker','o','MarkerSize',5,...
-    'LineWidth',2, 'EdgeLabelColor','m');
+    'LineWidth',0.5);
+
+% 'EdgeLabelColor','m', 'EdgeLabel',H.Edges.Weight,
+
+% t
+TerminalNodes = ([1, 6, 11, 17, 18, 19, 20, 21]);      % terminal nodes
+highlight(h, TerminalNodes, 'NodeColor', 'g');
+
+Route1 = ([17, 23, 4, 24, 25, 5, 6]);      % route
+Route2 = ([21, 24, 4, 23, 15, 22, 18]);      % route
+Route3 = ([1, 22, 2, 3, 25, 5, 14, 13, 12, 27, 9, 10, 11]);      % route
+Route4 = ([6, 7, 28, 8, 26, 19]);      % route
+Route5 = ([1, 22, 2, 16, 26, 20]);      % route
+
+%highlight(h, Route1, 'EdgeColor', 'y', 'LineWidth',3);
+
+%highlight(h,Route2,'EdgeColor',hsv2rgb([2/5, 1, 1]),'LineWidth',3);
+%highlight(h,Route3,'EdgeColor',hsv2rgb([3/5, 1, 1]),'LineWidth',3);
+%highlight(h,Route4,'EdgeColor',hsv2rgb([4/5, 1, 1]),'LineWidth',3);
+%highlight(h,Route5,'EdgeColor',hsv2rgb([5/5, 1, 1]),'LineWidth',3);
+%highlight(h,Route1,'EdgeColor',hsv2rgb([1/5, 1, 1]),'LineWidth',3);

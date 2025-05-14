@@ -1,4 +1,3 @@
-
 function initial_pop_matrix = generateInitialPopulation(population_size, BusRouteID, TotalNoOfRoutes, ...
     min_route_length, max_route_length, network_name, DistanceMatrix, TimeMatrix, TravelDemandMatrix, ...
     TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro)
@@ -9,11 +8,11 @@ initial_pop_matrix = cell(population_size,5);
 % 4th col: Fitness Value, 5th col: route string, 6th col: transfers
 
 g = 1;
-% Rows
-fprintf('\n');
 
+fprintf('\n');
 while (g <= population_size)
     [route_set_IDs,route_set] = generateInitialRouteSet(DistanceMatrix, BusRouteID, TotalNoOfRoutes, s, min_route_length, max_route_length);
+    
     % Make sure that the route set is connected and has no repeated routes
     connected = checkConnectedness(route_set,s,n);
     repeatedroutes = checkRouteRepetition(route_set,s,n);
@@ -53,6 +52,5 @@ while (g <= population_size)
 end
 
 disp("Initial Population Matrix"); disp(initial_pop_matrix);
-save('RouteSetsGenerated.mat','initial_pop_matrix','-mat')
 
 end

@@ -63,7 +63,6 @@ while (valid ~= 1)
             end
       
             [r1 c1] = size(crn);
-            %disp("Meow"); disp(crn);
             for w = 1:c1
                 p1 = crn(1,w);
                 common_route = functionRoute(B(p1,:));
@@ -98,10 +97,6 @@ while (valid ~= 1)
         end
     end
     end
-
-    %disp("Meow After 0 or 1 Transfer, no. of inf, no. of excess zeroes"); 
-    %disp(sum(sum(ismember(SolutionTimeMatrix,Inf))));
-    %disp(sum(sum(ismember(SolutionTimeMatrix,0)))-149);
     
         
     % 3. Case 3: Two Transfers Are Needed
@@ -170,6 +165,7 @@ while (valid ~= 1)
 
 
                 SolutionTimeMatrix(i,j) = min(crn3(4,:));
+
                 if (SolutionTimeMatrix(i,j) == 0)
                     SolutionTimeMatrix(i,j) = Inf;
                 else
@@ -184,10 +180,6 @@ while (valid ~= 1)
          end
     end
     end
-
-    %disp("Meow After 2 Transfers, no. of inf, no. of excess zeroes"); 
-    %disp(sum(sum(ismember(SolutionTimeMatrix,Inf))));
-    %disp(sum(sum(ismember(SolutionTimeMatrix,0)))-149);
 
     
     % Case 4: Three Transfers are Needed
@@ -215,7 +207,6 @@ while (valid ~= 1)
                 end
             end   
             
-            %disp("rin,rjn"); disp(rin); disp(rjn);
             if ((sum(rin) ~= 0 && sum(rjn) ~= 0) && sum(ismember(rin,rjn)) == 0) 
 
                 f11=1;
@@ -263,17 +254,15 @@ while (valid ~= 1)
                 end
 
                 SolutionTimeMatrix(i,j) = min(crn4(5,:));
-                %disp("Time is:"); disp(min(crn4(5,:)));
+
 
                 if (SolutionTimeMatrix(i,j) == 0)
                     SolutionTimeMatrix(i,j) = Inf;
                 else
-                    %fprintf("\n %d %d", i,j); disp(crn4);
                     TransferMatrix(i,j)=3;
                 end
                 
             else
-                %fprintf("\n %d %d", i,j);
                 SolutionTimeMatrix(i,j) = Inf;
 
             end
@@ -290,11 +279,6 @@ while (valid ~= 1)
     ntransfer(1,3) = sum(sum(ismember(TransferMatrix,2)));
     ntransfer(1,4) = sum(sum(ismember(TransferMatrix,3)));
     ntransfer(1,5) = sum(sum(ismember(TransferMatrix,Inf)));
-    
-    %disp("After 3 Transfers, no. of inf, no. of excess zeroes"); 
-    %disp(sum(sum(ismember(SolutionTimeMatrix,Inf))));
-    %disp(sum(sum(ismember(SolutionTimeMatrix,0)))-149);
-    %disp(SolutionTimeMatrix);
 
     n = 149;
 

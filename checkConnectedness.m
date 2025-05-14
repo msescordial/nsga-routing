@@ -28,6 +28,6 @@ function connected = checkConnectedness(route_set,s,n)
     bins = conncomp(G);
 
     % Check connectivity
-    connected = double(sum(bins) == n);
+    connected = double(max(bins) == 1);  
 
 end

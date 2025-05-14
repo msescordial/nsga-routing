@@ -1,30 +1,4 @@
 % K-Shortest Path Algorithm 
-
-% Function kShortestPath(netCostMatrix, source, destination, k_paths) 
-% returns the K first shortest paths (k_paths) from node source to node destination
-% in the a network of N nodes represented by the NxN matrix netCostMatrix.
-% In netCostMatrix, cost of 'inf' represents the 'absence' of a link 
-% It returns 
-% [shortestPaths]: the list of K shortest paths (in cell array 1 x K) and 
-% [totalCosts]   : costs of the K shortest paths (in array 1 x K)
-%==============================================================
-% Meral Shirazipour
-% This function is based on Yen's k-Shortest Path algorithm (1971)
-% This function calls a slightly modified function dijkstra() 
-% by Xiaodong Wang 2004.
-% * netCostMatrix must have positive weights/costs
-%==============================================================
-%  DATE :           December 9 decembre 2009                                 
-%  Last Updated:    August 2 2010; January 6 2011; August 2 2011
-%  ----Changes April 2 2010:----
-%  1-previous version(9/12/2009)did not handle some exceptions which should
-%    have returned empty matrices for the return values (added lines 20 and 29)
-%  2-includes the changes proposed by Darren Rowland
-%  ----Changes January 6 2011:----
-%  1-fixed a bug reported by Babak Zafari that prevented from finding ALL
-%    the shortest paths in large networks
-%==============================================================
-
 function [shortestPaths, totalCosts] = kShortestPath_Dijkstra(netCostMatrix, source, destination, k_paths)
 
 if source > size(netCostMatrix,1) || destination > size(netCostMatrix,1)

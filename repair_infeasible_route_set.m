@@ -70,7 +70,11 @@ function [feasible_solution] = repair_infeasible_route_set(infeasible_solution, 
                         % Try to insert the missing node with two repair strategies
                         feasible_route1 = correct_infeasible_route_case1(missing_node, neighbor, p, route3, DistanceMatrix);
                         if feasible_route1 ~= 0
-                            new_route = feasible_route1;
+                            new_route = feasible_route1; 
+                            disp("Missing Node:"); disp(missing_node);
+                            disp("Neighbor"); disp(neighbor);
+                            disp("Old Route"); disp(route3);
+                            disp("New Feasible Route after Case 1"); disp(new_route);
                             new_route_cell{k1, 1} = new_route;
                             replaced_route_no = [replaced_route_no, k1];
                             break;
@@ -78,6 +82,10 @@ function [feasible_solution] = repair_infeasible_route_set(infeasible_solution, 
                             feasible_route2 = correct_infeasible_route_case2(missing_node, neighbor, p, route3, DistanceMatrix);
                             if feasible_route2 ~= 0
                                 new_route = feasible_route2;
+                                disp("Missing Node:"); disp(missing_node);
+                                disp("Neighbor"); disp(neighbor);
+                                disp("Old Route"); disp(route3);
+                                disp("New Feasible Route after Case 2"); disp(new_route);
                                 new_route_cell{k1, 1} = new_route;
                                 replaced_route_no = [replaced_route_no, k1];
                                 break;

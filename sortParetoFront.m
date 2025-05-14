@@ -32,7 +32,7 @@ for k=2:nr
     end
 end
 
-disp("Front Pop Final"); disp(front_pop_final);
+%disp("Front Pop Final"); disp(front_pop_final);
 
 %% Get Fmin, Fmax, Fmed
 [nr2, ~] = size(front_pop_final);

@@ -15,29 +15,24 @@
 function [front_pop_final] = NSGA_2(min_route_length, max_route_length, network_name, DistanceMatrix, TimeMatrix, TravelDemandMatrix, ...
     TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro)
 
+rng('shuffle');  % Ensure different random sequences per run
+
 %% ----- Parameters -----
-max_no_of_generations = 300;       
-population_size = 50;             
+max_no_of_generations = 100;       
+population_size = 100;             
 P_ce = 0.5;             % inter-crossover probability
 P_ca = 0.5;             % intra-crossover probability
 P_m = 0.01;             % mutation probability
 
 % For Sensitivity Analysis
-gen_set = [25, 50, 100, 200, 300];
+%gen_set = [25 50 100 200 300];
 
 %% ----- INITIALIZATION -----
 % GENERATE CANDIDATE ROUTES
 tic
-
-if (network_name == "metro_manila")
-%    [BusRouteID, AllPaths, AllCosts, TotalNoOfRoutes] = generateRoutes(DistanceMatrix,k_ksP,TerminalNodes,max_route_length);
-%    save('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes','-mat')
-    load('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes');
-else
-    [BusRouteID, AllPaths, AllCosts, TotalNoOfRoutes] = generateRoutes(DistanceMatrix,k_ksP,TerminalNodes,max_route_length);
-end
-
-%disp(BusRouteID);
+%[BusRouteID, AllPaths, AllCosts, TotalNoOfRoutes] = generateRoutes(DistanceMatrix,k_ksP,TerminalNodes,max_route_length);
+%save('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes','-mat')
+load('RoutesGenerated.mat','BusRouteID','AllPaths','AllCosts','TotalNoOfRoutes');
 fprintf('\nNo. of candidate routes generated is %d.\n\n', TotalNoOfRoutes);
 toc
 
@@ -56,13 +51,14 @@ pop=repmat(empty_individual,population_size,1);
 %initial_pop_matrix = generateInitialPopulation(population_size, BusRouteID, TotalNoOfRoutes, ...
 %    min_route_length, max_route_length, network_name, DistanceMatrix, TimeMatrix, TravelDemandMatrix, ...
 %    TerminalNodes, k_ksP, s, transfer_time, n, metro_line, incorporate_metro);
+%save('RouteSetsGenerated.mat','initial_pop_matrix','-mat')
 load('RouteSetsGenerated.mat','initial_pop_matrix');
-
 disp(initial_pop_matrix);
 
-for h=1:population_size
-    disp(initial_pop_matrix{h,4});
-end
+% All route sets must have finite objective function values
+%for h=1:population_size
+%    disp(initial_pop_matrix{h,4});
+%end
 
 for g=1:population_size
     pop(g).Position=initial_pop_matrix{g,5};
@@ -71,22 +67,27 @@ for g=1:population_size
     pop(g).Transfer=initial_pop_matrix{g,6};
 end
 
+% For debugging
+%load('pop_nsga.mat','pop');
+%disp(pop);
+
 % Non-Dominated Sorting
-[pop, F]=NonDominatedSorting(pop);  %disp("Non-Dominated Sorting"); disp("pop"); disp(F);
+[pop, F]=NonDominatedSorting(pop);  
 % Calculate Crowding Distance
-pop=CalcCrowdingDistance(pop,F);    %disp("Calculate Crowding Distance"); disp("pop"); disp(F);
+pop=CalcCrowdingDistance(pop,F);    
 % Sort Population
-[pop, F]=SortPopulation(pop);       %disp("Sort Population"); disp("pop"); disp(F);
-%disp("pop"); disp(pop);
+[pop, F]=SortPopulation(pop);       
 
 
 %% --- NSGA-II MAIN LOOP ---
 iter = 1;
+%iter = 3;   % for debugging
 
 while iter <= max_no_of_generations
+
     fprintf('\nGeneration %d\n',iter);
 
-    % CROSSOVER
+    %% CROSSOVER
     % Inter-string
     % 1. Choosing of Pair of Parents randomly
     % 2. Choosing of demarcation site randomly
@@ -109,49 +110,41 @@ while iter <= max_no_of_generations
         route_set_1 = stringToRoutes(new_route_string_1,s,n);
         route_set_2 = stringToRoutes(new_route_string_2,s,n);
 
-        % Make sure that each route set is connected
-        connected_1 = checkConnectedness(route_set_1,s,n);
-        connected_2 = checkConnectedness(route_set_2,s,n);
-        if (connected_1 + connected_2 < 2)
-            %fprintf("Not connected "); 
-            %plotRouteSet(network_name,route_set_1,21,n);
-            %plotRouteSet(network_name,route_set_2,21,n);
+        % Check for feasibility (other constraints)
+        bin1 = checkConstraints(route_set_1,s,n,new_route_string_1,...
+            DistanceMatrix,min_route_length,max_route_length,TerminalNodes);
+        if (bin1 == 0)
             continue
         end
-        % Make sure that the route set has no repeated routes
-        repeatedroutes1 = checkRouteRepetition(route_set_1,s,n);
-        repeatedroutes2 = checkRouteRepetition(route_set_2,s,n);
-        if (repeatedroutes1 + repeatedroutes2 > 1)
-            %fprintf("Repeated routes ");
+        bin2 = checkConstraints(route_set_2,s,n,new_route_string_2,...
+            DistanceMatrix,min_route_length,max_route_length,TerminalNodes);
+        if (bin2 == 0)
             continue
         end
 
         % Append metro line route to compute cost
         route_string_1 = [new_route_string_1 metro_line];
         route_string_2 = [new_route_string_2 metro_line];
-        s1 = 26; %s1 = 22;     
+        s1 = 26;     
         new_route_set_1 = stringToRoutes(route_string_1,s1,n);
         new_route_set_2 = stringToRoutes(route_string_2,s1,n);
 
+        % Make sure that the two Objective Function Values have no Inf value
         [rsce1_TimeMatrix, ntransfer1] = getRouteSetTimeMatrix(new_route_set_1,s1,TimeMatrix, transfer_time);
         route_set_1_cost = getObjectiveFunctionValue(new_route_set_1,TravelDemandMatrix,DistanceMatrix,rsce1_TimeMatrix,n);
+        if (ismember(inf,route_set_1_cost) == 1 || any(isnan(route_set_1_cost)))
+            %fprintf("Objective value has Inf/NaN ");
+            continue
+        end
         [rsce2_TimeMatrix, ntransfer2] = getRouteSetTimeMatrix(new_route_set_2,s1,TimeMatrix, transfer_time);
         route_set_2_cost = getObjectiveFunctionValue(new_route_set_2,TravelDemandMatrix,DistanceMatrix,rsce2_TimeMatrix,n);
-        % Make sure that the two Objective Function Values have no Inf value
-        if (ismember(inf,route_set_1_cost) == 1 || any(isnan(route_set_1_cost)) || ismember(inf,route_set_2_cost) == 1 || any(isnan(route_set_2_cost)))
+        if (ismember(inf,route_set_2_cost) == 1 || any(isnan(route_set_2_cost)))
             %fprintf("Objective value has Inf/NaN ");
             continue
         end
         
-        %disp(rsce1_TimeMatrix); disp(rsce2_TimeMatrix); 
-
-        %disp(route_set_1_cost); 
-        %disp(rsce1_TimeMatrix); %disp(sum(sum(ismember(rsce1_TimeMatrix,0)))-149); disp(ntransfer1(1,5));
-        %disp(route_set_2_cost); %disp(sum(sum(ismember(rsce2_TimeMatrix,0)))-149); disp(ntransfer2(1,5));
-        %disp(rsce2_TimeMatrix);
-        
-        popc(k).Position = new_route_string_1;         %new_route_set_1;
-        popc(k+1).Position = new_route_string_2;       %new_route_set_2;
+        popc(k).Position = new_route_string_1;         %new_route_set_1
+        popc(k+1).Position = new_route_string_2;       %new_route_set_2
         popc(k).Cost = route_set_1_cost;
         popc(k+1).Cost = route_set_2_cost;
         popc(k).ActualCost = route_set_1_cost;
@@ -165,15 +158,15 @@ while iter <= max_no_of_generations
 
     fprintf("\nInter-String Crossover done.");
 
-    disp("sum of pop actual costs");
-    sum = 0;
-    for h=1:length(pop)
-        sum = sum + pop(h).ActualCost;
-    end
-    disp(sum);
+    % For debugging
+%    sum = 0;
+%    for h=1:length(pop)
+%        sum = sum + pop(h).ActualCost;
+%    end
+%    disp("sum of pop actual costs"); disp(sum);
 
     
-    % Intra-string
+    %% Intra-string
     % 1. Choosing Parent population randomly
     % 2. Choosing of demarcation site randomly
     % 3. Crossover Probability P_ca 
@@ -182,57 +175,55 @@ while iter <= max_no_of_generations
     popc=repmat(popc,1,1);   % repeat copies of array
     k = 1;
     while (k <= nCrossover)   
-        fprintf(' %d ',k);
+        fprintf(' %d',k);
         i1=randi([1 population_size/2]);
         p1=popc(i1);
         
         %crossover
-        [new_route_string]=Intra_Crossover(p1.Position,s,n,min_route_length,max_route_length,DistanceMatrix);      %disp(popc(k).Position)
-        %cost
+        [new_route_string]=Intra_Crossover(p1.Position,s,n,min_route_length,max_route_length,DistanceMatrix);
         route_set = stringToRoutes(new_route_string,s,n); 
-        % Make sure that the route set is connected
-        connected = checkConnectedness(route_set,s,n);
-        % Make sure that the route set has no repeated routes
-        repeatedroutes = checkRouteRepetition(route_set,s,n);
 
-        if (connected ~= 0 && repeatedroutes ~= 1)
-
-            % Append metro line route to compute cost
-            route_string = [new_route_string metro_line];
-            s1 = 26;    %s1 = 22;     
-            new_route_set = stringToRoutes(route_string,s1,n);
-
-            [rsca_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(new_route_set,s1,TimeMatrix, transfer_time);
-            route_set_cost = getObjectiveFunctionValue(new_route_set,TravelDemandMatrix,DistanceMatrix,rsca_TimeMatrix,n);
-            % Make sure that the two Objective Function Values have no Inf value
-            if (ismember(inf,route_set_cost) == 1 || any(isnan(route_set_cost)))
-                %fprintf('Objective value has Inf/NaN ');
-                continue
-            else
-
-                popc(k).Position = new_route_string; %new_route_set;
-                popc(k).Cost = route_set_cost;
-                popc(k).ActualCost = route_set_cost;
-                popc(k).Transfer = ntransfer;
-            end
+        % Check for feasibility (other constraints)
+        bin = checkConstraints(route_set,s,n,new_route_string,...
+            DistanceMatrix,min_route_length,max_route_length,TerminalNodes);
+        if (bin == 0)
+            continue
         end
 
-        %disp(k); disp(route_set_cost);
+        % Append metro line route to compute cost
+        route_string = [new_route_string metro_line];
+        s1 = 26;     
+        new_route_set = stringToRoutes(route_string,s1,n);
+
+        [rsca_TimeMatrix, ntransfer] = getRouteSetTimeMatrix(new_route_set,s1,TimeMatrix, transfer_time);
+        route_set_cost = getObjectiveFunctionValue(new_route_set,TravelDemandMatrix,DistanceMatrix,rsca_TimeMatrix,n);
+        % Make sure that the two Objective Function Values have no Inf value
+        if (ismember(inf,route_set_cost) == 1 || any(isnan(route_set_cost)))
+            %fprintf('Objective value has Inf/NaN ');
+            continue
+        else
+            popc(k).Position = new_route_string;    %new_route_set;
+            popc(k).Cost = route_set_cost;
+            popc(k).ActualCost = route_set_cost;
+            popc(k).Transfer = ntransfer;
+        end
+
         k = k+1;
     end
     popc=popc(:);       %disp(popc);
 
-    fprintf("\nIntra-String Crossover done.");
+    fprintf("\nIntra-String Crossover done.");   
 
-    disp("sum of pop actual costs");
-    sum = 0;
-    for h=1:length(pop)
-        sum = sum + pop(h).ActualCost;
-    end
-    disp(sum);       
+     % For debugging
+%    sum = 0;
+%    for h=1:length(pop)
+%        sum = sum + pop(h).ActualCost;
+%    end
+%    disp("sum of pop actual costs"); disp(sum);
 
-    % MUTATION
 
+
+    %% MUTATION
     nMutation=round(P_m*population_size);     % Number of Parents (Offsprings)
     popm=repmat(empty_individual,nMutation,1);   % repeat copies of array
     k = 1;
@@ -243,18 +234,12 @@ while iter <= max_no_of_generations
 
         %mutation
         [new_route_string] = Mutation(p1.Position,s,n,DistanceMatrix,min_route_length,max_route_length);
-
         route_set = stringToRoutes(new_route_string,s,n); 
-        % Make sure that the route set is connected
-        connected = checkConnectedness(route_set,s,n);
-        if (connected == 0)
-            %fprintf("Not connected ");
-            continue
-        end
-        % Make sure that the route set has no repeated routes
-        repeatedroutes = checkRouteRepetition(route_set,s,n);
-        if (repeatedroutes == 1)
-            %fprintf("Repeated routes ");
+        
+        % Check for feasibility (other constraints)
+        bin = checkConstraints(route_set,s,n,new_route_string,...
+            DistanceMatrix,min_route_length,max_route_length,TerminalNodes);
+        if (bin == 0)
             continue
         end
 
@@ -271,8 +256,6 @@ while iter <= max_no_of_generations
             continue
         end  
 
-        %disp(route_set_cost);
-
         popm(k).Position = new_route_string;
         popm(k).Cost = route_set_cost;
         popm(k).ActualCost = route_set_cost;
@@ -283,19 +266,28 @@ while iter <= max_no_of_generations
 
     fprintf("\nMutation done.\n");
 
-    disp("sum of pop actual costs");
-    sum = 0;
-    for h=1:length(pop)
-        sum = sum + pop(h).ActualCost;
-    end
-    disp(sum);
+     % For debugging
+%    sum = 0;
+%    for h=1:length(pop)
+%        sum = sum + pop(h).ActualCost;
+%    end
+%    disp("sum of pop actual costs"); disp(sum);
 
+
+    %disp("pop"); disp(pop);
+    %disp("popc"); disp(popc);
+    %disp("popm"); disp(popm);
 
     % MERGE
     pop=[pop
          popc
          popm];         
-    %disp("pop"); disp(pop);
+    %disp("pop merged"); disp([pop.ActualCost]);
+
+    % Delete duplicate individuals
+    pop2 = pop;
+    pop = getUniqueIndividuals(pop2, population_size);
+    %disp("pop unique"); disp([pop.ActualCost]);
 
     % Non-Dominated Sorting
     [pop, F]=NonDominatedSorting(pop);
@@ -322,19 +314,28 @@ while iter <= max_no_of_generations
     disp(['Iteration ' num2str(iter) ': Number of F1 Members = ' num2str(numel(F1))]);
     
     % Plot F1 Actual Costs
-    [actual_costs,Fmin,Fmax,Fmed] = PlotActualCosts(F1);
+    [actual_costs,Fmin,Fmax,Fmed] = PlotActualCosts(F1,iter,gen_set);
     title(['Generation ' num2str(iter)]);
     pause(0.01);
 
+    save('pop_nsga.mat','pop','-mat');  
+
     %% Graph and Display F1 for Sensitivity Analysis
     if (ismember(iter,gen_set))  
+        % plot route sets R1, R2, R3
         s1 = 26; n = 149;
         fprintf('\n R1:');
         forSensitivityAnalysis(s1, n, metro_line, Fmin{1,1}, network_name, iter);
+        filename = 'F1_R1.fig';
+        savefig(gcf,filename);
         fprintf('\n R2:');
         forSensitivityAnalysis(s1, n, metro_line, Fmax{1,1}, network_name, iter);
+        filename = 'F1_R2.fig';
+        savefig(gcf,filename);
         fprintf('\n R3:');
         forSensitivityAnalysis(s1, n, metro_line, Fmed{1,1}, network_name, iter);
+        filename = 'F1_R3.fig';
+        savefig(gcf,filename);
     end
 
     iter = iter + 1;
@@ -344,8 +345,6 @@ end
 %% Pareto Front
 [Fmin,Fmax,Fmed,front_pop_final] = sortParetoFront(F1);
 [nr, ~]=size(front_pop_final);
-
-%F1_transfermatrix = zeros(numel(F1),5);
 F1_transfermatrix = zeros(nr,5);
 
 %% Display F1 Route Sets 
@@ -353,43 +352,38 @@ fprintf('\n\nRoute Sets in Pareto-optimal Front: \n');
 q = 101;
 for g=1:nr
     fprintf('\nRoute Set no. %d: \n', g); 
-    %fprintf('Normalized Costs: \n'); disp(front_pop_final{g,2}); 
     fprintf('Actual Costs: \n'); disp(front_pop_final{g,3}');
     F1_transfermatrix(g,:) = front_pop_final{g,4};
     
     route_string = [front_pop_final{g,1} metro_line];
-    s = 26;     %s = 22; 
+    s = 26;     
     n = 149;
 
-    %Sr=stringToRoutes(front_pop{g,1},s,n);
     Sr=stringToRoutes(route_string,s,n);
     for a=1:s
         fprintf(' Route %d:', a); 
         br = functionRoute(Sr{a,1});
         displayRoute(br);
     end
-    %fprintf('Normalized Costs: \n'); disp(front_pop{g,2}); 
-    %fprintf('Actual Costs: \n'); disp(front_pop{g,3});
 
     % Plot Route Sets
-    
     figure(q);
-    plotRouteSet(network_name,Sr,s,n);
+    plotRouteSet(network_name,Sr,s,n,g);
     title(['Route Set ' num2str(g)]); 
     pause(0.5);
     q = q+1;
-
 end
 
 %% Plot F1 Actual Costs
 figure();
-costs = PlotActualCosts(F1);
+costs = PlotActualCosts(F1,iter,gen_set);
 pause(0.01);
 title('F1 Actual Costs');
+filename = 'F1actcost.fig';
+savefig(gcf,filename);
 
 %% Plot F1 Transfer Statistics
 figure();
-%x = linspace(1,numel(F1),numel(F1));
 x = linspace(1,nr,nr);
 y1 = ([F1_transfermatrix(:,1)]').*(1/n^2);
 plot(x,y1,'r-*','MarkerSize',10, 'DisplayName', 'Direct trips','LineWidth',2);
@@ -403,36 +397,19 @@ hold on
 y4 = ([F1_transfermatrix(:,4)]').*(1/n^2);
 plot(x,y4,'c-*','MarkerSize',10, 'DisplayName', '3 Transfer trips','LineWidth',2);
 s = 26;
-if (network_name == "metro_manila")
-    hold on
-    if (s==26)
-        plot(3.5, 0.1441,'r-*','MarkerSize',10); hold on
-        plot(3.5, 0.4792,'y-*','MarkerSize',10); hold on
-        plot(3.5, 0.3738,'g-*','MarkerSize',10); hold on
-        plot(3.5, 0.0030,'c-*','MarkerSize',10);
-%    elseif (s==22)
-%        plot(3.5, 0.1256,'r-*','MarkerSize',10); hold on
-%        plot(3.5, 0.4339,'y-*','MarkerSize',10); hold on
-%        plot(3.5, 0.4405,'g-*','MarkerSize',10); hold on
-%        plot(3.5, 0,'c-*','MarkerSize',10);
-    end
-end
+hold on
+plot(3.5, 0.1441,'r-*','MarkerSize',10); hold on
+plot(3.5, 0.4792,'y-*','MarkerSize',10); hold on
+plot(3.5, 0.3738,'g-*','MarkerSize',10); hold on
+plot(3.5, 0.0030,'c-*','MarkerSize',10);
 hold off
 
 xlabel('Non-dominated Solutions');
 ylabel('Proportion of Transfers');
 title('Proportion of Transfers of Non-Dominated Solutions');
 legend('Direct trips','1 Transfer trips','2 Transfer trips','3 Transfer trips');
-
-
-%% Plot Convergence
-
-    % Plot only from warm-up onward
-    %plot(warmup_generations+1:max_no_of_generations, HV(warmup_generations+1:end), 'LineWidth', 2);
-    %xlabel('Generation');
-    %ylabel('Hypervolume');
-    %title('Convergence Plot');
-    %grid on;
+filename = 'F1transfers.fig';
+savefig(gcf,filename);
 
 end
     

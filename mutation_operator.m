@@ -51,17 +51,17 @@ function new_node = mutation_operator(node, DistanceMatrix, vec, n)
         k_paths = 5;
         [shortestPaths, totalCosts] = kShortestPath_Dijkstra(DistanceMatrix, vici, aft, k_paths);
 
-        for h = 1:k_paths
-            path = shortestPaths{h};
-            if isempty(path)
-                continue;
-            end
+        %for h = 1:k_paths
+            path = shortestPaths{1,1};
+            %if isempty(path)
+            %    continue;
+            %end
             intermediate_nodes = path(1:end-1);
             if all(~ismember(intermediate_nodes, vec))
                 new_node = intermediate_nodes(1);
                 return;
             end
-        end
+        %end
 
         new_node = node;
     end

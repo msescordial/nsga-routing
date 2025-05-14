@@ -58,9 +58,9 @@ weight = edge_weight_time;
 H = graph(edge_start, edge_end, weight, node_names);
 %H = simplify(H);
 g = plot(H,'XData',x,'YData',y,'NodeFontWeight','bold', 'Marker','o', ...
-    'MarkerSize',4,'LineWidth',0.5,'NodeLabel',node_names);
+    'MarkerSize',4,'LineWidth',0.5,'EdgeLabel',H.Edges.Weight);
 
-% , 'EdgeLabel',H.Edges.Weight
+% ,  'NodeLabel',node_names
 
 TerminalNodes = ([2, 4, 5, 7, 8, 9, 17, 21, 29, 34, 39, 43, 51, 55, 58, 66, 72, ...
     83, 94, 100, 103, 106, 113, 119, 121, 122, 126, 143, 95, 47, 19, 107, 123, 14]);
