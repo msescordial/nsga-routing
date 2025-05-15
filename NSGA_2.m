@@ -25,7 +25,7 @@ P_ca = 0.5;             % intra-crossover probability
 P_m = 0.01;             % mutation probability
 
 % For Sensitivity Analysis
-%gen_set = [25 50 100 200 300];
+gen_set = []; %[25 50 100 200 300];
 
 %% ----- INITIALIZATION -----
 % GENERATE CANDIDATE ROUTES
