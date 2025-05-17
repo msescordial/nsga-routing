@@ -1,60 +1,48 @@
 function [pop_final] = getUniqueIndividuals(pop, population_size)
 
-% Extract necessary fields into a matrix
-n = numel(pop);     %disp("Numel pop"); disp(n); disp(pop);
-pop2 = cell(n, 6);
+n = numel(pop);
+pop2 = cell(n, 4);
+costs = zeros(n, 2);
+
 for g = 1:n
     pop2{g,1} = pop(g).Position;
     pop2{g,2} = pop(g).ActualCost;
-    pop2{g,3} = pop(g).ActualCost;  % Possibly redundant
-    pop2{g,4} = pop(g).Transfer;
-    
-    % Assuming ActualCost is a 1x2 vector
-    pop2{g,5} = pop(g).ActualCost(1);
-    pop2{g,6} = pop(g).ActualCost(2);
+    pop2{g,3} = pop(g).Transfer;
+    costs(g,:) = pop(g).ActualCost';  
 end
 
-% Sort by ActualCost
-pop_sorted = sortrows(pop2, [5, 6]);
-%disp("Pop Sorted"); disp(pop_sorted);
+% Get unique individuals by ActualCost and sort
+[~, ia, ~] = unique(costs, 'rows', 'stable');
+costs_unique = costs(ia,:);
+[~, sort_idx] = sortrows(costs_unique, [1, 2]);
+pop_sorted = pop2(ia(sort_idx), :);
 
-% Remove duplicates based on ActualCost
-% Get unique rows
-[nr, ~] = size(pop_sorted);
-pop3 = cell(1,6);
-pop3(1,:) = pop_sorted(1,:);
-w = 2;
-for k=2:nr
-    A = isequal(pop_sorted{k,3},pop_sorted{k-1,3});
-    if (A == 0)    % unequal rows
-        pop3(w,:) = pop_sorted(k,:);
-        w = w + 1;
+% Create final population structure
+empty_individual = struct('Position', [], 'Cost', [], 'ActualCost', [], 'Transfer', [], ...
+                          'Rank', [], 'DominationSet', [], 'DominatedCount', [], 'CrowdingDistance', []);
+pop_final = repmat(empty_individual, size(pop_sorted,1), 1);
+
+for g = 1:size(pop_sorted,1)
+    pop_final(g).Position = pop_sorted{g,1};
+    pop_final(g).ActualCost = pop_sorted{g,2};
+    pop_final(g).Cost = pop_sorted{g,2};  
+    pop_final(g).Transfer = pop_sorted{g,3};
+end
+
+% If unique individuals < population size, pad with non-duplicate individuals from original pop
+if numel(pop_final) < population_size
+    existing = cat(1, pop_final.ActualCost);
+    for i = 1:n
+        if size(existing,1) >= population_size
+            break;
+        end
+        if ~ismember(pop(i).ActualCost, existing, 'rows')
+            pop_final(end+1) = pop(i);
+            existing = [existing; pop(i).ActualCost];
+        end
     end
 end
-%disp("Pop Final"); disp(pop3);
 
-empty_individual.Position=[];
-empty_individual.Cost=[];
-empty_individual.ActualCost=[];
-empty_individual.Transfer=[];
-empty_individual.Rank=[];
-empty_individual.DominationSet=[];
-empty_individual.DominatedCount=[];
-empty_individual.CrowdingDistance=[];
-pop_final=repmat(empty_individual,size(pop3,1),1);
-
-for g=1:size(pop3,1)
-    pop_final(g).Position=pop3{g,1};
-    pop_final(g).Cost=pop3{g,2};
-    pop_final(g).ActualCost=pop3{g,3};
-    pop_final(g).Transfer=pop3{g,4};
-end
-
-m = numel(pop_final); %disp("Numel pop_final"); disp(m); disp(pop_final);
-
-if m < population_size
-    pop_final = pop;
-end
-
+%disp([pop_final.ActualCost]');
 
 end
